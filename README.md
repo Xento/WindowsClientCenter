@@ -160,7 +160,7 @@ Examples:
 - `ICC_Intune__TenantId=<your-tenant-id-or-domain>`
 - `ICC_Intune__ClientId=<your-public-client-app-id>`
 
-Additional details and a recommended local override template are in [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
+A complete key-by-key reference, supported values, defaults, effects, and a recommended local override template are in [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
 
 ## Architecture
 
