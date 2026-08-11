@@ -1,6 +1,6 @@
 # Windows Client Center
 
-Windows Client Center is a Windows desktop troubleshooting shell for Intune-managed devices that combines local diagnostics, WinRM-backed actions, Microsoft Graph-assisted workflows, and plugin-based tooling in one UI.
+Windows Client Center is a Windows desktop troubleshooting shell for Intune and/or MECM managed devices that combines local diagnostics, WinRM-backed actions, Microsoft Graph-assisted workflows, and plugin-based tooling in one UI.
 
 ## Highlights
 
