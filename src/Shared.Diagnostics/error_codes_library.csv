@@ -1,0 +1,416 @@
+
+Code,Source,Category,Description
+0x00000000,Win32,General,The operation completed successfully.
+0x00000002,Win32,General,The system cannot find the file specified.
+0x00000003,Win32,General,The system cannot find the path specified.
+0x00000004,Win32,General,The system cannot open the file.
+0x00000005,Win32,General,Access is denied.
+0x00000006,Win32,General,The handle is invalid.
+0x00000008,Win32,General,Not enough storage is available to process this command.
+0x00000020,Win32,General,The process cannot access the file because it is being used by another process.
+0x00000057,Win32,General,The parameter is incorrect.
+0x80004005,Win32,HRESULT,Unspecified error.
+0x8000FFFF,Win32,HRESULT,Unexpected error.
+0x80070002,Win32,HRESULT,File not found.
+0x80070005,Win32,HRESULT,Access denied.
+0x80070020,Win32,HRESULT,File in use.
+0x80070422,Win32,HRESULT,Service disabled.
+0x800705B4,Intune,Autopilot,Timeout during autopilot preparation.
+0x80073CF0,Windows,Packaging,The package is unsigned or publisher name does not match the signing certificate; package could not be opened.
+0x80073CF3,Windows,Packaging,Incoming package conflicts with an installed package or missing dependency; unsupported architecture.
+0x80073CFB,Windows,Packaging,Provided package is already installed; reinstallation blocked.
+0x80073CFF,Windows,Packaging,Deployment failed because no valid license or sideloading policy; sideloading or developer license required.
+0x801C03EA,Entra,Autopilot,Autopilot self-deploying mode TPM attestation failed causing failure to join Entra ID.
+0x80CF201C,Intune,Packaging,To install this app you must have a sideloading-enabled system or AllowAllTrustedApps policy.
+0x8A150004,AppInstall,Winget,Opening manifest failed
+0x8A150005,AppInstall,Winget,Cancellation signal received
+0x8A150006,AppInstall,Winget,Running ShellExecute failed
+0x8A150007,AppInstall,Winget,Cannot process manifest. The manifest version is higher than supported. Please update the client.
+0x8A150008,AppInstall,Winget,Downloading installer failed
+0x8A150009,AppInstall,Winget,Cannot write to index; it is a higher schema version
+0x8A15000A,AppInstall,Winget,The index is corrupt
+0x8A15000B,AppInstall,Winget,The configured source information is corrupt
+0x8A15000C,AppInstall,Winget,The source name is already configured
+0x8A15000D,AppInstall,Winget,The source type is invalid
+0x8A15000E,AppInstall,Winget,The MSIX file is a bundle, not a package
+0x8A15000F,AppInstall,Winget,Data required by the source is missing
+0x8A150011,AppInstall,Winget,The installer file's hash does not match the manifest
+0x8A150012,AppInstall,Winget,The source name does not exist
+0x8A150013,AppInstall,Winget,The source location is already configured under another name
+0x8A150014,AppInstall,Winget,No packages found
+0x8A150015,AppInstall,Winget,No sources are configured
+0x8A150016,AppInstall,Winget,Multiple packages found matching the criteria
+0x8A150017,AppInstall,Winget,No manifest found matching the criteria
+0x8A150018,AppInstall,Winget,Failed to get Public folder from source package
+0x8A150019,AppInstall,Winget,Command requires administrator privileges to run
+0x8A15001A,AppInstall,Winget,The source location is not secure
+0x8A15001B,AppInstall,Winget,The Microsoft Store client is blocked by policy
+0x8A15001C,AppInstall,Winget,The Microsoft Store app is blocked by policy
+0x8A15001D,AppInstall,Winget,The feature is currently under development. It can be enabled using winget settings.
+0x8A15001E,AppInstall,Winget,Failed to install the Microsoft Store app
+0x8A15001F,AppInstall,Winget,Failed to perform auto complete
+0x8A150020,AppInstall,Winget,Failed to initialize YAML parser
+0x8A150021,AppInstall,Winget,Encountered an invalid YAML key
+0x8A150022,AppInstall,Winget,Encountered a duplicate YAML key
+0x8A150023,AppInstall,Winget,Invalid YAML operation
+0x8A150024,AppInstall,Winget,Failed to build YAML doc
+0x8A150025,AppInstall,Winget,Invalid YAML emitter state
+0x8A150026,AppInstall,Winget,Invalid YAML data
+0x8A150027,AppInstall,Winget,LibYAML error
+0x8A150028,AppInstall,Winget,Manifest validation succeeded with warning
+0x8A150029,AppInstall,Winget,Manifest validation failed
+0x8A15002A,AppInstall,Winget,Manifest is invalid
+0x8A15002B,AppInstall,Winget,No applicable update found
+0x8A15002C,AppInstall,Winget,winget upgrade --all completed with failures
+0x8A15002D,AppInstall,Winget,Installer failed security check
+0x8A15002E,AppInstall,Winget,Download size does not match expected content length
+0x8A15002F,AppInstall,Winget,Uninstall command not found
+0x8A150030,AppInstall,Winget,Running uninstall command failed
+0x8A150031,AppInstall,Winget,ICU break iterator error
+0x8A150032,AppInstall,Winget,ICU casemap error
+0x8A150033,AppInstall,Winget,ICU regex error
+0x8A150034,AppInstall,Winget,Failed to install one or more imported packages
+0x8A150035,AppInstall,Winget,Could not find one or more requested packages
+0x8A150036,AppInstall,Winget,Json file is invalid
+0x8A150037,AppInstall,Winget,The source location is not remote
+0x8A150038,AppInstall,Winget,The configured rest source is not supported
+0x8A150039,AppInstall,Winget,Invalid data returned by rest source
+0x8A15003A,AppInstall,Winget,Operation is blocked by Group Policy
+0x8A15003B,AppInstall,Winget,Rest API internal error
+0x8A15003C,AppInstall,Winget,Invalid rest source url
+0x8A15003D,AppInstall,Winget,Unsupported MIME type returned by rest API
+0x8A15003E,AppInstall,Winget,Invalid rest source contract version
+0x8A15003F,AppInstall,Winget,The source data is corrupted or tampered
+0x8A150040,AppInstall,Winget,Error reading from the stream
+0x8A150041,AppInstall,Winget,Package agreements were not agreed to
+0x8A150042,AppInstall,Winget,Error reading input in prompt
+0x8A150043,AppInstall,Winget,The search request is not supported by one or more sources
+0x8A150044,AppInstall,Winget,The rest API endpoint is not found
+0x8A150045,AppInstall,Winget,Failed to open the source.
+0x8A150046,AppInstall,Winget,Source agreements were not agreed to
+0x8A150047,AppInstall,Winget,Header size exceeds the allowable limit of 1024 characters. Please reduce the size and try again.
+0x8A150048,AppInstall,Winget,Missing resource file
+0x8A150049,AppInstall,Winget,Running MSI install failed
+0x8A15004A,AppInstall,Winget,Arguments for msiexec are invalid
+0x8A15004B,AppInstall,Winget,Failed to open one or more sources
+0x8A15004C,AppInstall,Winget,Failed to validate dependencies
+0x8A15004D,AppInstall,Winget,One or more package is missing
+0x8A15004E,AppInstall,Winget,Invalid table column
+0x8A15004F,AppInstall,Winget,The upgrade version is not newer than the installed version
+0x8A150050,AppInstall,Winget,Upgrade version is unknown and override is not specified
+0x8A150051,AppInstall,Winget,ICU conversion error
+0x8A150052,AppInstall,Winget,Failed to install portable package
+0x8A150053,AppInstall,Winget,Volume does not support reparse points
+0x8A150054,AppInstall,Winget,Portable package from a different source already exists.
+0x8A150055,AppInstall,Winget,Unable to create symlink, path points to a directory.
+0x8A150056,AppInstall,Winget,The installer cannot be run from an administrator context.
+0x8A150057,AppInstall,Winget,Failed to uninstall portable package
+0x8A150058,AppInstall,Winget,Failed to validate DisplayVersion values against index.
+0x8A150059,AppInstall,Winget,One or more arguments are not supported.
+0x8A15005A,AppInstall,Winget,Embedded null characters are disallowed for SQLite
+0x8A15005B,AppInstall,Winget,Failed to find the nested installer in the archive.
+0x8A15005C,AppInstall,Winget,Failed to extract archive.
+0x8A15005D,AppInstall,Winget,Invalid relative file path to nested installer provided.
+0x8A15005E,AppInstall,Winget,The server certificate did not match any of the expected values.
+0x8A15005F,AppInstall,Winget,Install location must be provided.
+0x8A150060,AppInstall,Winget,Archive malware scan failed.
+0x8A150061,AppInstall,Winget,Found at least one version of the package installed.
+0x8A150062,AppInstall,Winget,A pin already exists for the package.
+0x8A150063,AppInstall,Winget,There is no pin for the package.
+0x8A150064,AppInstall,Winget,Unable to open the pin database.
+0x8A150065,AppInstall,Winget,One or more applications failed to install
+0x8A150066,AppInstall,Winget,One or more applications failed to uninstall
+0x8A150067,AppInstall,Winget,One or more queries did not return exactly one match
+0x8A150068,AppInstall,Winget,The package has a pin that prevents upgrade.
+0x8A150069,AppInstall,Winget,The package currently installed is the stub package
+0x8A15006A,AppInstall,Winget,Application shutdown signal received
+0x8A15006B,AppInstall,Winget,Failed to download package dependencies.
+0x8A15006C,AppInstall,Winget,Failed to download package. Download for offline installation is prohibited.
+0x8A15006D,AppInstall,Winget,A required service is busy or unavailable. Try again later.
+0x8A15006E,AppInstall,Winget,The guid provided does not correspond to a valid resume state.
+0x8A15006F,AppInstall,Winget,The current client version did not match the client version of the saved state.
+0x8A150070,AppInstall,Winget,The resume state data is invalid.
+0x8A150071,AppInstall,Winget,Unable to open the checkpoint database.
+0x8A150072,AppInstall,Winget,Exceeded max resume limit.
+0x8A150073,AppInstall,Winget,Invalid authentication info.
+0x8A150074,AppInstall,Winget,Authentication method not supported.
+0x8A150075,AppInstall,Winget,Authentication failed.
+0x8A150076,AppInstall,Winget,Authentication failed. Interactive authentication required.
+0x8A150077,AppInstall,Winget,Authentication failed. User cancelled.
+0x8A150078,AppInstall,Winget,Authentication failed. Authenticated account is not the desired account.
+0x8A150079,AppInstall,Winget,Repair command not found.
+0x8A15007A,AppInstall,Winget,Repair operation is not applicable.
+0x8A15007B,AppInstall,Winget,Repair operation failed.
+0x8A15007C,AppInstall,Winget,The installer technology in use doesn't support repair.
+0x8A15007D,AppInstall,Winget,Repair operations involving administrator privileges are not permitted on packages installed within the user scope.
+0x8A15007E,AppInstall,Winget,The SQLite connection was terminated to prevent corruption.
+0x8A15007F,AppInstall,Winget,Failed to get Microsoft Store package catalog.
+0x8A150080,AppInstall,Winget,No applicable Microsoft Store package found from Microsoft Store package catalog.
+0x8A150081,AppInstall,Winget,Failed to get Microsoft Store package download information.
+0x8A150082,AppInstall,Winget,No applicable Microsoft Store package download information found.
+0x8A150083,AppInstall,Winget,Failed to retrieve Microsoft Store package license.
+0x8A150084,AppInstall,Winget,The Microsoft Store package does not support download.
+0x8A150085,AppInstall,Winget,Failed to retrieve Microsoft Store package license. The Microsoft Entra Id account does not have the required privilege.
+0x8A150086,AppInstall,Winget,Downloaded zero byte installer; ensure that your network connection is working properly.
+0x8A150087,AppInstall,Winget,Failed installing one or more fonts.
+0x8A150088,AppInstall,Winget,Font file is not supported and cannot be installed.
+0x8A150089,AppInstall,Winget,Font package is already installed.
+0x8A15008A,AppInstall,Winget,Font file not found.
+0x8A15008B,AppInstall,Winget,Font uninstall failed. The font may not be in a good state. Try uninstalling after a restart.
+0x8A15008C,AppInstall,Winget,Font validation failed.
+0x8A15008D,AppInstall,Winget,Font rollback failed. The font may not be in a good state. Try uninstalling after a restart.
+0x8A15008E,AppInstall,Winget,An upgrade is available but uses a different install technology than the current installation
+0x8A150101,AppInstall,Winget,Application is currently running. Exit the application then try again.
+0x8A150102,AppInstall,Winget,Another installation is already in progress. Try again later.
+0x8A150103,AppInstall,Winget,One or more file is being used. Exit the application then try again.
+0x8A150104,AppInstall,Winget,This package has a dependency missing from your system.
+0x8A150105,AppInstall,Winget,There's no more space on your PC. Make space, then try again.
+0x8A150106,AppInstall,Winget,There's not enough memory available to install. Close other applications then try again.
+0x8A150107,AppInstall,Winget,This application requires internet connectivity. Connect to a network then try again.
+0x8A150108,AppInstall,Winget,This application encountered an error during installation. Contact support.
+0x8A150109,AppInstall,Winget,Restart your PC to finish installation.
+0x8A15010A,AppInstall,Winget,Installation failed. Restart your PC then try again.
+0x8A15010B,AppInstall,Winget,Your PC will restart to finish installation.
+0x8A15010C,AppInstall,Winget,You cancelled the installation.
+0x8A15010D,AppInstall,Winget,Another version of this application is already installed.
+0x8A15010E,AppInstall,Winget,A higher version of this application is already installed.
+0x8A15010F,AppInstall,Winget,Organization policies are preventing installation. Contact your admin.
+0x8A150110,AppInstall,Winget,Failed to install package dependencies.
+0x8A150111,AppInstall,Winget,Application is currently in use by another application.
+0x8A150112,AppInstall,Winget,Invalid parameter.
+0x8A150113,AppInstall,Winget,Package not supported by the system.
+0x82AC0201,MDM,OMA-DM,Invalid parameter in SyncML command.
+0x82AC0202,MDM,OMA-DM,Command format not supported.
+0x82AC0203,MDM,OMA-DM,Access denied for requested operation.
+0x82AC0204,MDM,OMA-DM,Command failed or not allowed.
+0x82AC0205,MDM,OMA-DM,Target node not found.
+0x82AC0206,MDM,OMA-DM,Value rejected by CSP.
+0x82AC0207,MDM,OMA-DM,Command dependency failure.
+0x87D1FDE8,Intune,IME,Remediation script failed.
+0x87D1FDE9,Intune,IME,Detection script failed.
+0x87D101F4,Intune,App,Application install failed.
+0x87D10204,Intune,App,Application not detected after install.
+0x87D103E8,Intune,App,Install timeout.
+0x87D13B9F,Intune,IME,Script failed with unknown error.
+0x87D300C9,Intune,Content,App download failed.
+0x87D30067,Intune,Content,Content not available.
+0x80180002,Entra,Enrollment,Device already enrolled.
+0x80180026,Entra,Enrollment,MDM enrollment not allowed.
+0x8018002A,Entra,Enrollment,Device not supported.
+0x801C0003,Entra,Enrollment,Device registration failed.
+0x00CF0001,Intune,UpdateAgent,Agent was successfully stopped.
+0x00CF0003,Intune,UpdateAgent,Operation completed with errors during update.
+0x00CF0004,Intune,UpdateAgent,Marked for disconnect because a callback was running.
+0x00CF0005,Intune,UpdateAgent,System must be restarted to complete installation.
+0x00CF0006,Intune,UpdateAgent,Update is already installed.
+0x00CF0007,Intune,UpdateAgent,Update to be removed is not installed.
+0x00CF2015,Intune,UpdateAgent,Update installation is in progress.
+0x80CF0001,Intune,UpdateAgent,The agent could not provide the service.
+0x80CF0002,Intune,UpdateAgent,Maximum capacity of the service exceeded.
+0x80CF0003,Intune,UpdateAgent,Identifier could not be found.
+0x80CF0004,Intune,UpdateAgent,Object could not be initialized.
+0x80CF0007,Intune,UpdateAgent,Invalid index to a collection.
+0x80CF0008,Intune,UpdateAgent,Queried item could not be found.
+0x80CF0009,Intune,UpdateAgent,A conflicting operation is in progress.
+0x80CF000B,Intune,UpdateAgent,Operation was canceled.
+0x80CF000C,Intune,UpdateAgent,No operation required.
+0x80CF000D,Intune,UpdateAgent,Required information missing in update XML data.
+0x80CF000E,Intune,UpdateAgent,Invalid information found in update XML data.
+0x80CF000F,Intune,UpdateAgent,Circular update relationships detected.
+0x80CF0010,Intune,UpdateAgent,Update relationships are too deeply nested.
+0x80CF0011,Intune,UpdateAgent,Invalid update relationship.
+0x80CF0012,Intune,UpdateAgent,Invalid registry value.
+0x80CF0013,Intune,UpdateAgent,Duplicate item.
+0x80CF0014,Intune,UpdateAgent,Invalid install requested.
+0x80CF0016,Intune,UpdateAgent,Installation not allowed; another install in progress or pending restart.
+0x80CF0017,Intune,UpdateAgent,No applicable updates.
+0x80CF0018,Intune,UpdateAgent,Required user token is missing.
+0x80CF0019,Intune,UpdateAgent,Exclusive update conflict.
+0x80CF001A,Intune,UpdateAgent,Policy value not set.
+0x80CF001D,Intune,UpdateAgent,Update contains invalid metadata.
+0x80CF001E,Intune,UpdateAgent,Operation could not be completed because service or system is stopping.
+0x80CF001F,Intune,UpdateAgent,No network connection available.
+0x80CF0020,Intune,UpdateAgent,No logged-on interactive user.
+0x80CF0021,Intune,UpdateAgent,Operation timed out.
+0x80CF0022,Intune,UpdateAgent,Operation failed for all updates.
+0x80CF0024,Intune,UpdateAgent,No updates available.
+0x80CF0025,Intune,UpdateAgent,User access disabled by policy.
+0x80CF0026,Intune,UpdateAgent,Invalid update type.
+0x80CF0028,Intune,UpdateAgent,Uninstall not allowed because request did not originate from WSUS.
+0x80CF0029,Intune,UpdateAgent,Invalid product license or missing updates.
+0x80CF002C,Intune,UpdateAgent,Delta-compressed update requires source; bin source absent.
+0x80CF002D,Intune,UpdateAgent,Full-file update requires source; source absent.
+0x80CF002E,Intune,UpdateAgent,Access to unmanaged server is disabled (Windows Update disabled).
+0x80CF002F,Intune,UpdateAgent,Operation cancelled by policy.
+0x80CF0030,Intune,UpdateAgent,Invalid proxy server.
+0x80CF0031,Intune,UpdateAgent,Invalid file.
+0x80CF0032,Intune,UpdateAgent,Invalid search criteria.
+0x80CF0034,Intune,UpdateAgent,Download failed.
+0x80CF0035,Intune,UpdateAgent,Update not processed.
+0x80CF0036,Intune,UpdateAgent,Invalid operation.
+0x80CF0037,Intune,UpdateAgent,Operation not supported.
+0x80CF0038,Intune,UpdateAgent,Downloaded file has unexpected content type.
+0x80CF0039,Intune,UpdateAgent,Server asked the agent to resync too many times.
+0x80CF0043,Intune,UpdateAgent,No UI support.
+0x80CF0044,Intune,UpdateAgent,Per-machine update access denied.
+0x80CF0045,Intune,UpdateAgent,Unsupported search scope.
+0x80CF0046,Intune,UpdateAgent,Bad file URL.
+0x80CF0047,Intune,UpdateAgent,Requested operation not supported.
+0x80CF0049,Intune,UpdateAgent,Data out of range.
+0x80CF004A,Intune,UpdateAgent,Invalid Windows Update Agent version.
+0x80CF004B,Intune,UpdateAgent,Search completed with some failures.
+0x80240001,WindowsUpdate,WUAgent,Service not available.
+0x80240002,WindowsUpdate,WUAgent,Maximum capacity reached.
+0x80240003,WindowsUpdate,WUAgent,Unknown identifier.
+0x80240004,WindowsUpdate,WUAgent,Agent not initialized.
+0x80240005,WindowsUpdate,WUAgent,Range overlap.
+0x80240006,WindowsUpdate,WUAgent,Too many ranges.
+0x80240007,WindowsUpdate,WUAgent,Invalid index.
+0x80240008,WindowsUpdate,WUAgent,Item not found.
+0x80240009,WindowsUpdate,WUAgent,Operation in progress.
+0x8024000A,WindowsUpdate,WUAgent,Cannot cancel operation.
+0x8024000B,WindowsUpdate,WUAgent,Operation cancelled.
+0x8024000C,WindowsUpdate,WUAgent,No operation required.
+0x8024000D,WindowsUpdate,WUAgent,XML missing data.
+0x8024000E,WindowsUpdate,WUAgent,XML invalid.
+0x8024000F,WindowsUpdate,WUAgent,Cycle detected.
+0x80240010,WindowsUpdate,WUAgent,Relationship too deep.
+0x80240011,WindowsUpdate,WUAgent,Invalid relationship.
+0x80240012,WindowsUpdate,WUAgent,Invalid registry value.
+0x80240013,WindowsUpdate,WUAgent,Duplicate item.
+0x80240016,WindowsUpdate,WUAgent,Install not allowed.
+0x80240017,WindowsUpdate,WUAgent,Not applicable.
+0x80240018,WindowsUpdate,WUAgent,No user token.
+0x80240019,WindowsUpdate,WUAgent,Exclusive install conflict.
+0x8024001A,WindowsUpdate,WUAgent,Policy not set.
+0x8024001B,WindowsUpdate,WUAgent,Self-update in progress.
+0x8024001D,WindowsUpdate,WUAgent,Invalid update metadata.
+0x8024001E,WindowsUpdate,WUAgent,Service stopping.
+0x8024001F,WindowsUpdate,WUAgent,No connection.
+0x80240020,WindowsUpdate,WUAgent,No interactive user.
+0x80240021,WindowsUpdate,WUAgent,Time out.
+0x80240022,WindowsUpdate,WUAgent,All updates failed.
+0x80240023,WindowsUpdate,WUAgent,EULAs declined.
+0x80240024,WindowsUpdate,WUAgent,No update.
+0x80240025,WindowsUpdate,WUAgent,User access disabled.
+0x80240026,WindowsUpdate,WUAgent,Invalid update type.
+0x80240027,WindowsUpdate,WUAgent,URL too long.
+0x80240028,WindowsUpdate,WUAgent,Uninstall not allowed.
+0x80240029,WindowsUpdate,WUAgent,Invalid product license.
+0x8024002A,WindowsUpdate,WUAgent,Missing handler.
+0x8024002B,WindowsUpdate,WUAgent,Legacy server.
+0x8024002C,WindowsUpdate,WUAgent,Source absent.
+0x8024002E,WindowsUpdate,WUAgent,Windows Update disabled.
+0x8024002F,WindowsUpdate,WUAgent,Operation cancelled by policy.
+0x80240030,WindowsUpdate,WUAgent,Invalid proxy server.
+0x80240031,WindowsUpdate,WUAgent,Invalid file.
+0x80240032,WindowsUpdate,WUAgent,Invalid criteria.
+0x80240033,WindowsUpdate,WUAgent,EULA unavailable.
+0x80240034,WindowsUpdate,WUAgent,Download failed.
+0x80240035,WindowsUpdate,WUAgent,Update not processed.
+0x80240036,WindowsUpdate,WUAgent,Invalid operation state.
+0x80240037,WindowsUpdate,WUAgent,Not supported.
+0x80240038,WindowsUpdate,WUAgent,Invalid file content.
+0x80240039,WindowsUpdate,WUAgent,Too many resync.
+0x80240040,WindowsUpdate,WUAgent,No server core support.
+0x80240041,WindowsUpdate,WUAgent,Sysprep in progress.
+0x80240042,WindowsUpdate,WUAgent,Unknown service.
+0x80240FFF,WindowsUpdate,WUAgent,Unexpected error.
+0x80244001,WindowsUpdate,Network,SOAP initialize failure.
+0x80244002,WindowsUpdate,Network,Out of memory.
+0x80244003,WindowsUpdate,Network,SOAP generate error.
+0x80244004,WindowsUpdate,Network,SOAP connect failure.
+0x80244005,WindowsUpdate,Network,SOAP send failure.
+0x80244006,WindowsUpdate,Network,SOAP server error.
+0x8024402C,WindowsUpdate,Network,Name resolution failure.
+0x80249001,WindowsUpdate,Inventory,Inventory parse failed.
+0x80249002,WindowsUpdate,Inventory,Inventory type failed.
+0x80249003,WindowsUpdate,Inventory,Inventory upload failed.
+0x80249004,WindowsUpdate,Inventory,Unexpected inventory error.
+0x80249005,WindowsUpdate,Inventory,WMI error.
+0x8024D001,WindowsUpdate,Setup,Invalid INF data.
+0x8024D002,WindowsUpdate,Setup,Invalid identification data.
+0x8024D003,WindowsUpdate,Setup,Already initialized.
+0x8024D004,WindowsUpdate,Setup,Not initialized.
+0x8024D005,WindowsUpdate,Setup,Version mismatch.
+0x8024D006,WindowsUpdate,Setup,Target newer than source.
+0x8024D007,WindowsUpdate,Setup,Registration failed.
+0x8024D00C,WindowsUpdate,Setup,Reboot required.
+0x8024D00D,WindowsUpdate,Setup,Update is already running.
+0x8024D00F,WindowsUpdate,Setup,Handler execution failure.
+0x80190190,Intune,Sync,Bad request during MDM session sync; trust lost.
+0xCAA2000C,Intune,Sync,Unknown Win32 error retrieving AAD token during sync.
+0x801901AD,Intune,Sync,Unknown Win32 error due to network connectivity issues during sync.
+0x00000000,Intune,Autopilot,Device-targeted app installation encountered no error.
+0x00000004,Intune,Autopilot,Preparing device for mobile management failed.
+0x82AA0002,Intune,Autopilot,Unknown Win32 error related to co-management installation.
+0x86000022,Intune,Autopilot,Specified node does not exist in Configuration Manager.
+0x8018000A,Entra,Autopilot,Device already enrolled (Autopilot).
+0x87D10000,Intune,Syncml,No error code.
+0x87D10065,Intune,Syncml,The specified SyncML command is being carried out but has not yet completed (SyncML 101).
+0x87D100C8,Intune,Syncml,SyncML 200: Command completed successfully.
+0x87D100C9,Intune,Syncml,SyncML 201: Requested item was added.
+0x87D100CA,Intune,Syncml,SyncML 202: Accepted for processing.
+0x87D100CB,Intune,Syncml,SyncML 203: Non-authoritative response.
+0x87D100CC,Intune,Syncml,SyncML 204: Request completed successfully but no data returned.
+0x87D100CD,Intune,Syncml,SyncML 205: Source should update its content.
+0x87D100CE,Intune,Syncml,SyncML 206: Only part of the command was completed.
+0x87D100CF,Intune,Syncml,SyncML 207: Conflict resolved with merge.
+0x87D100D0,Intune,Syncml,SyncML 208: Conflict resolved with client's command winning.
+0x87D100D1,Intune,Syncml,SyncML 209: Conflict resolved with duplicate.
+0x87D100D2,Intune,Syncml,SyncML 210: Delete without archive; data deleted but not archived.
+0x87D100D3,Intune,Syncml,SyncML 211: Item not deleted; item not found.
+0x87D100D4,Intune,Syncml,SyncML 212: Authentication accepted; no further authentication needed.
+0x87D100D5,Intune,Syncml,SyncML 213: Chunked item accepted and buffered.
+0x87D1012C,Intune,Syncml,SyncML 300: Requested target is one of multiple alternatives.
+0x87D10130,Intune,Syncml,SyncML 304: Requested SyncML command was not executed on the target.
+0x87D10190,Intune,Syncml,SyncML 400: Malformed syntax in the command.
+0x87D10194,Intune,Syncml,SyncML 404: The requested target was not found.
+0x87D10195,Intune,Syncml,SyncML 405: The requested command is not allowed on the target.
+0x87D10196,Intune,Syncml,SyncML 406: An optional feature in the request was not supported.
+0x87D10198,Intune,Syncml,SyncML 408: Expected message was not received within the required period of time.
+0x87D10199,Intune,Syncml,SyncML 409: Update conflict between client and server.
+0x87D1019A,Intune,Syncml,SyncML 410: Requested target is no longer on the recipient; no forwarding URI known.
+0x87D1019C,Intune,Syncml,SyncML 412: Precondition failed on target (missing byte size or length information).
+0x07D00200,MECM,Client,Client is successfully assigned with Group Policy site assignment.
+0x07D00522,MECM,Client,No more data.
+0x07D00635,MECM,Client,The scan was skipped because history was valid.
+0x87D20A0E,MECM,Compression,Shutdown received while compressing.
+0x87D20A0D,MECM,Compression,Unexpected error while compressing.
+0x87D20A0C,MECM,Compression,Already compressed.
+0x87D20A0B,MECM,Compression,Failed to create file header while compressing.
+0x87D20A0A,MECM,Compression,Failed to create file while compressing.
+0x87D20A09,MECM,Compression,Failed to create folder while compressing.
+0x87D20A08,MECM,Compression,Invalid compressed header in the file.
+0x87D20905,MECM,SEDO,SEDO lock request timed out.
+0x87D20904,MECM,SEDO,SEDO lock not found.
+0x87D20903,MECM,SEDO,Invalid object path for SEDO.
+0x87D2080A,MECM,Certificate,Certificate not found.
+0x87D20809,MECM,Certificate,Invalid data in the certificate.
+0x87D20708,MECM,SiteControl,Specified item to update is not found in the Site Control File.
+0x87D20705,MECM,SiteControl,Site not found in the Site Control File.
+0x87D20620,MECM,Reporting Services,SRS is not installed or not properly configured.
+0x87D20417,MECM,AutoDeployment,Auto Deployment Rule download failed.
+0x87D20414,MECM,WSUS,Cannot configure Windows Update or Microsoft Update as an upstream server on a peer primary.
+0x87D2040F,MECM,WSUS,WSUS Server component failure.
+0x87D2040E,MECM,WSUS,WSUS Server database connection failure.
+0x801C001D,Entra,Registration,Hybrid join SCP lookup failed while reading Active Directory configuration.
+0x801C0021,Entra,Registration,Device registration discovery failed due to a web request error.
+0x801C0022,Entra,Registration,Device registration discovery failed because the server response was invalid.
+0x801C0025,Entra,Registration,Device registration service is busy.
+0x801C003A,Entra,Registration,Tenant was not found during device registration discovery.
+0x80072EE2,Entra,Network,Network timeout while reaching Microsoft Entra registration endpoint.
+0x80072EE7,Entra,Network,DNS name resolution failed while reaching Microsoft Entra registration endpoint.
+0x80072EFE,Entra,Network,Connection was aborted while reaching Microsoft Entra registration endpoint.
+0x80090031,Entra,TPM,TPM anti-hammering or lockout temporarily blocked key authentication.
+0xCAA1002D,Entra,Authentication,ADAL operation is pending; inspect surrounding status fields.
+0xCAA20003,Entra,Authentication,Entra rejected the federated assertion as invalid grant.
+0xCAA82EE2,Entra,Authentication,Federated authentication request timed out.
+0xCAA82EFD,Entra,Authentication,Cannot connect to federated or Microsoft Entra authentication endpoint.
+0xCAA82EFE,Entra,Authentication,Connection to authentication endpoint was aborted.
+0xCAA82F8F,Entra,Authentication,TLS or certificate trust failed during federated authentication.
+0xCAA90006,Entra,Authentication,WS-Trust token request failed before token issuance.
+0xCAA90014,Entra,Authentication,WS-Trust request failed with a server-side security token fault.
+0xCAA90017,Entra,Authentication,Federation service does not expose required WS-Trust protocol.
+0xCAA90023,Entra,Authentication,Required WS-Trust username/password endpoint is missing in federation metadata.
+0xCAA9002C,Entra,Authentication,Failed to parse federation metadata XML response.

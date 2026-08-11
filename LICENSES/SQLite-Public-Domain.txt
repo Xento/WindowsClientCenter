@@ -1,0 +1,13 @@
+SQLite Public-Domain Notice
+
+The SQLite source code is in the public domain. No license is required to use,
+copy, modify, or distribute it. The SQLite project also publishes a blessing
+that may be used where a formal statement is desired.
+
+Official notice and blessing:
+https://www.sqlite.org/copyright.html
+
+The native SQLite library is distributed here through the
+SQLitePCLRaw.lib.e_sqlite3 NuGet package. SQLitePCLRaw's own wrapper code is
+licensed separately under Apache-2.0.
+

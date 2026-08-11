@@ -1,0 +1,496 @@
+<UserControl x:Class="WindowsClientCenter.Plugins.WindowsDefenderAgent.UI.WindowsDefenderAgentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style TargetType="Button" BasedOn="{StaticResource AppCommandButtonStyle}">
+            <Setter Property="MinWidth" Value="130" />
+        </Style>
+        <Style TargetType="GroupBox" BasedOn="{StaticResource AppGroupBoxStyle}" />
+        <Style TargetType="DataGrid" BasedOn="{StaticResource AppDataGridStyle}">
+            <Setter Property="SelectionMode" Value="Extended" />
+            <Setter Property="SelectionUnit" Value="CellOrRowHeader" />
+        </Style>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource AppShellOuterBorderStyle}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Style="{StaticResource AppShellHeaderBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Windows Defender" Style="{StaticResource AppShellHeaderTitleTextStyle}" />
+                    <TextBlock Text="Administrative health and diagnostics." Style="{StaticResource AppShellHeaderSubtitleTextStyle}" />
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="1" Style="{StaticResource AppShellCommandBarBorderStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE72C;" Content="Refresh current" Command="{Binding RefreshCurrentSectionCommand}" />
+                    <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE895;" Content="Refresh all" Command="{Binding RefreshAllCommand}" />
+                    <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}" Tag="&#xE721;" Content="Quick scan" Command="{Binding StartQuickScanCommand}" />
+                    <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}" Tag="&#xE721;" Content="Full scan" Command="{Binding StartFullScanCommand}" />
+                    <Button Style="{StaticResource AppDangerIconTextButtonStyle}" Tag="&#xE711;" Content="Stop scan" Command="{Binding StopScanCommand}" />
+                    <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE72C;" Content="Update signatures" Command="{Binding UpdateSignaturesCommand}" />
+                    <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE777;" Content="Restart WinDefend" Command="{Binding RestartDefenderServiceCommand}" />
+                    <TextBlock Margin="8,4,6,0" VerticalAlignment="Center" FontWeight="Bold" Text="Days:" />
+                    <TextBox Width="60"
+                             Margin="0,0,8,8"
+                             VerticalContentAlignment="Center"
+                             Text="{Binding DaysBack, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </Border>
+
+            <TabControl Grid.Row="2"
+                        Margin="8"
+                        SelectedIndex="{Binding SelectedSectionIndex, Mode=TwoWay}">
+                <TabControl.Style>
+                    <Style TargetType="TabControl">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type TabControl}">
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Padding="8">
+                                        <ContentPresenter ContentSource="SelectedContent" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Style>
+
+                <TabItem Header="Overview">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <GroupBox Grid.Row="0" Header="Health">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="18" Height="18" CornerRadius="9" Margin="0,0,8,0" Background="{Binding HealthColorHex}" />
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding HealthLevel, StringFormat=State: {0}}" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding HealthSummary}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Grid.Row="1" Header="Management">
+                            <WrapPanel>
+                                <StackPanel Width="180" Margin="0,0,8,0">
+                                    <TextBlock Text="Managed" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding IsManagedText}" />
+                                </StackPanel>
+                                <StackPanel Width="220" Margin="0,0,8,0">
+                                    <TextBlock Text="Managed by" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding ManagedByText}" />
+                                </StackPanel>
+                                <StackPanel Width="220">
+                                    <TextBlock Text="Running mode" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding RunningModeText}" />
+                                </StackPanel>
+                            </WrapPanel>
+                        </GroupBox>
+
+                        <GroupBox Grid.Row="2" Header="Summary">
+                            <WrapPanel>
+                                <StackPanel Width="180" Margin="0,0,8,0">
+                                    <TextBlock Text="Signature age" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding SignatureAgeText}" />
+                                </StackPanel>
+                                <StackPanel Width="220" Margin="0,0,8,0">
+                                    <TextBlock Text="Last scan" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding LastScanText}" />
+                                </StackPanel>
+                                <StackPanel Width="180" Margin="0,0,8,0">
+                                    <TextBlock Text="Active detections" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding ActiveDetectionsText}" />
+                                </StackPanel>
+                                <StackPanel Width="220">
+                                    <TextBlock Text="Active high/critical" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding ActiveHighCriticalDetectionsText}" />
+                                </StackPanel>
+                                <StackPanel Width="280">
+                                    <TextBlock Text="Microsoft baseline" FontWeight="Bold" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding MicrosoftVersionStatusColorHex}" />
+                                        <TextBlock Text="{Binding MicrosoftVersionStatusText}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </WrapPanel>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Protection Status">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="0" Header="Protection flags" HorizontalAlignment="Left">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="16" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Antivirus" FontWeight="Bold" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding AntivirusEnabledText}" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Realtime protection" FontWeight="Bold" />
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding RealtimeProtectionEnabledText}" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Behavior monitor" FontWeight="Bold" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding BehaviorMonitorEnabledText}" />
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="IOAV protection" FontWeight="Bold" />
+                                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding IoavProtectionEnabledText}" />
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="On access protection" FontWeight="Bold" />
+                                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding OnAccessProtectionEnabledText}" />
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="NIS" FontWeight="Bold" />
+                                <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding NisEnabledText}" />
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Tamper protection" FontWeight="Bold" />
+                                <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding TamperProtectionEnabledText}" />
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Versions">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="0" Header="Microsoft latest baseline" HorizontalAlignment="Left">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="16" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Status" FontWeight="Bold" />
+                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                                    <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding MicrosoftVersionStatusColorHex}" />
+                                    <TextBlock Text="{Binding MicrosoftVersionStatusText}" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Details" FontWeight="Bold" />
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding MicrosoftVersionStatusDetailsText}" TextWrapping="Wrap" MaxWidth="520" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Latest security intelligence" FontWeight="Bold" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding LatestSecurityIntelligenceVersionText}" />
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Latest engine version" FontWeight="Bold" />
+                                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding LatestEngineVersionText}" />
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Latest platform version" FontWeight="Bold" />
+                                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding LatestPlatformVersionText}" />
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="Latest baseline released" FontWeight="Bold" />
+                                <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding LatestReleasedText}" />
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Source" FontWeight="Bold" />
+                                <TextBlock Grid.Row="6" Grid.Column="2">
+                                    <Hyperlink NavigateUri="{Binding MicrosoftBaselineSourceUrlText}" RequestNavigate="OnHyperlinkRequestNavigate">
+                                        <Run Text="{Binding MicrosoftBaselineSourceUrlText}" />
+                                    </Hyperlink>
+                                </TextBlock>
+                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Release notes" FontWeight="Bold" />
+                                <TextBlock Grid.Row="7" Grid.Column="2">
+                                    <Hyperlink NavigateUri="{Binding MicrosoftReleaseNotesUrlText}" RequestNavigate="OnHyperlinkRequestNavigate">
+                                        <Run Text="{Binding MicrosoftReleaseNotesUrlText}" />
+                                    </Hyperlink>
+                                </TextBlock>
+                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Microsoft Learn" FontWeight="Bold" />
+                                <TextBlock Grid.Row="8" Grid.Column="2">
+                                    <Hyperlink NavigateUri="{Binding MicrosoftLearnUpdatesUrlText}" RequestNavigate="OnHyperlinkRequestNavigate">
+                                        <Run Text="{Binding MicrosoftLearnUpdatesUrlText}" />
+                                    </Hyperlink>
+                                </TextBlock>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Grid.Row="1" Header="Current component versions" HorizontalAlignment="Left">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="16" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Product version (platform)" FontWeight="Bold" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ProductVersionText}" ToolTip="{Binding ProductVersionTooltipText}" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Engine version" FontWeight="Bold" />
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding EngineVersionText}" ToolTip="{Binding EngineVersionTooltipText}" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Antivirus signatures" FontWeight="Bold" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding AntivirusSignatureVersionText}" ToolTip="{Binding SecurityIntelligenceTooltipText}" />
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Antispyware signatures" FontWeight="Bold" />
+                                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding AntispywareSignatureVersionText}" />
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="NIS engine" FontWeight="Bold" />
+                                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding NisEngineVersionText}" />
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="NIS signatures" FontWeight="Bold" />
+                                <TextBlock Grid.Row="5" Grid.Column="2" Text="{Binding NisSignatureVersionText}" />
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Signatures last updated" FontWeight="Bold" />
+                                <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding SignatureLastUpdatedText}" />
+                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Platform status" FontWeight="Bold" />
+                                <StackPanel Grid.Row="7" Grid.Column="2" Orientation="Horizontal" ToolTip="{Binding ProductVersionTooltipText}">
+                                    <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding ProductVersionStatusColorHex}" />
+                                    <TextBlock Text="{Binding ProductVersionStatusText}" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="8" Grid.Column="0" Text="Engine status" FontWeight="Bold" />
+                                <StackPanel Grid.Row="8" Grid.Column="2" Orientation="Horizontal" ToolTip="{Binding EngineVersionTooltipText}">
+                                    <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding EngineVersionStatusColorHex}" />
+                                    <TextBlock Text="{Binding EngineVersionStatusText}" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="9" Grid.Column="0" Text="Security intelligence status" FontWeight="Bold" />
+                                <StackPanel Grid.Row="9" Grid.Column="2" Orientation="Horizontal" ToolTip="{Binding SecurityIntelligenceTooltipText}">
+                                    <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding SecurityIntelligenceStatusColorHex}" />
+                                    <TextBlock Text="{Binding SecurityIntelligenceStatusText}" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="10" Grid.Column="0" Text="Platform details" FontWeight="Bold" />
+                                <TextBlock Grid.Row="10" Grid.Column="2" Text="{Binding ProductVersionStatusDetailsText}" TextWrapping="Wrap" MaxWidth="560" />
+                                <TextBlock Grid.Row="11" Grid.Column="0" Text="Engine details" FontWeight="Bold" />
+                                <TextBlock Grid.Row="11" Grid.Column="2" Text="{Binding EngineVersionStatusDetailsText}" TextWrapping="Wrap" MaxWidth="560" />
+                                <TextBlock Grid.Row="12" Grid.Column="0" Text="Security intelligence details" FontWeight="Bold" />
+                                <TextBlock Grid.Row="12" Grid.Column="2" Text="{Binding SecurityIntelligenceStatusDetailsText}" TextWrapping="Wrap" MaxWidth="560" />
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Scans">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="0" Header="Scan timestamps" HorizontalAlignment="Left">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="16" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Quick scan start" FontWeight="Bold" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding QuickScanStartText}" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Quick scan end" FontWeight="Bold" />
+                                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding QuickScanEndText}" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Full scan start" FontWeight="Bold" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding FullScanStartText}" />
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Full scan end" FontWeight="Bold" />
+                                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding FullScanEndText}" />
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Last scan" FontWeight="Bold" />
+                                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding LastScanText}" />
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Settings">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Margin="0,0,0,6" Text="{Binding SettingsStatus}" FontWeight="Bold" />
+                        <TabControl Grid.Row="1" Margin="0,2,0,0">
+                            <TabItem Header="General Settings">
+                                <DataGrid ItemsSource="{Binding SettingsEntries}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="260" />
+                                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </TabItem>
+
+                            <TabItem Header="ASR Rules">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Margin="0,0,0,6" Text="{Binding AsrRulesStatus}" FontWeight="Bold" />
+                                    <DataGrid Grid.Row="1" ItemsSource="{Binding AsrRuleEntries}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Rule name" Binding="{Binding RuleName}" Width="330" />
+                                            <DataGridTextColumn Header="Rule ID" Binding="{Binding RuleId}" Width="250" />
+                                            <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="130" />
+                                            <DataGridTextColumn Header="Per-rule exclusions" Binding="{Binding RuleSpecificExclusions}" Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+
+                                    <TextBlock Grid.Row="2" Margin="0,8,0,6" Text="{Binding ExclusionsStatus}" FontWeight="Bold" />
+                                    <DataGrid Grid.Row="3" ItemsSource="{Binding ExclusionEntries}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="140" />
+                                            <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Detections">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Margin="0,0,0,6" Text="{Binding DetectionsStatus}" FontWeight="Bold" />
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding DetectionEntries}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Time" Binding="{Binding TimestampText}" Width="150" />
+                                <DataGridTextColumn Header="Threat" Binding="{Binding ThreatName}" Width="240" />
+                                <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="95" />
+                                <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive, Mode=OneWay}" Width="60" />
+                                <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="140" />
+                                <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="95" />
+                                <DataGridTextColumn Header="Details" Binding="{Binding Details}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Device Control">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <DockPanel Grid.Row="0" Margin="0,0,0,6">
+                            <Button DockPanel.Dock="Right"
+                                    Content="Refresh Device Control"
+                                    Command="{Binding RefreshDeviceControlCommand}"
+                                    Margin="8,0,0,0" />
+                            <TextBlock VerticalAlignment="Center"
+                                       Text="{Binding DeviceControlStatus}"
+                                       FontWeight="Bold"
+                                       TextWrapping="Wrap" />
+                        </DockPanel>
+
+                        <GroupBox Grid.Row="1" Header="Blocked device summary">
+                            <DataGrid ItemsSource="{Binding DeviceControlSummaries}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Last blocked" Binding="{Binding LastBlockedText}" Width="150" />
+                                    <DataGridTextColumn Header="Type" Binding="{Binding DeviceType}" Width="125" />
+                                    <DataGridTextColumn Header="Device" Binding="{Binding DisplayName}" Width="220" />
+                                    <DataGridTextColumn Header="Blocks" Binding="{Binding BlockedCount}" Width="65" />
+                                    <DataGridTextColumn Header="Device instance ID" Binding="{Binding DeviceInstanceId}" Width="320" />
+                                    <DataGridTextColumn Header="Hardware IDs" Binding="{Binding HardwareIds}" Width="260" />
+                                    <DataGridTextColumn Header="VID" Binding="{Binding VendorId}" Width="80" />
+                                    <DataGridTextColumn Header="PID" Binding="{Binding ProductId}" Width="80" />
+                                    <DataGridTextColumn Header="Serial" Binding="{Binding SerialNumber}" Width="160" />
+                                    <DataGridTextColumn Header="Class GUID" Binding="{Binding ClassGuid}" Width="220" />
+                                    <DataGridTextColumn Header="Policy" Binding="{Binding PolicyName}" Width="180" />
+                                    <DataGridTextColumn Header="Policy ID" Binding="{Binding PolicyId}" Width="220" />
+                                    <DataGridTextColumn Header="Rule ID" Binding="{Binding PolicyRuleId}" Width="220" />
+                                    <DataGridTextColumn Header="Verdict" Binding="{Binding PolicyVerdict}" Width="100" />
+                                    <DataGridTextColumn Header="Access" Binding="{Binding Access}" Width="110" />
+                                    <DataGridTextColumn Header="Last user" Binding="{Binding LastUser}" Width="160" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+
+                        <TextBlock Grid.Row="2"
+                                   Margin="0,8,0,6"
+                                   Text="Raw Device Control events"
+                                   FontWeight="Bold" />
+
+                        <DataGrid Grid.Row="3" ItemsSource="{Binding DeviceControlEvents}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Time" Binding="{Binding TimestampText}" Width="150" />
+                                <DataGridTextColumn Header="Event ID" Binding="{Binding EventId}" Width="75" />
+                                <DataGridTextColumn Header="Type" Binding="{Binding DeviceType}" Width="125" />
+                                <DataGridTextColumn Header="Device" Binding="{Binding DeviceName}" Width="220" />
+                                <DataGridTextColumn Header="Device instance ID" Binding="{Binding DeviceInstanceId}" Width="320" />
+                                <DataGridTextColumn Header="Hardware IDs" Binding="{Binding HardwareIds}" Width="260" />
+                                <DataGridTextColumn Header="Verdict" Binding="{Binding PolicyVerdict}" Width="100" />
+                                <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="100" />
+                                <DataGridTextColumn Header="User" Binding="{Binding User}" Width="160" />
+                                <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="220" />
+                                <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+            <Border Grid.Row="3"
+                    BorderBrush="{StaticResource ShellBorderBrush}"
+                    BorderThickness="1,1,0,0"
+                    Padding="8,4"
+                    Background="#F5F7FB">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Left" Text="{Binding Status}" FontWeight="SemiBold" />
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding LastRefreshText, StringFormat=Last refresh: {0}}" />
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

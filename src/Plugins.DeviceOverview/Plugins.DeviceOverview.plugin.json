@@ -1,0 +1,10 @@
+{
+  "id": "device-overview",
+  "displayName": "Device Overview",
+  "version": "1.0.0",
+  "capability": "View",
+  "menuPath": "Device",
+  "minHostVersion": "1.0.0",
+  "assembly": "Plugins.DeviceOverview.dll",
+  "type": "WindowsClientCenter.Plugins.DeviceOverview.DeviceOverviewPlugin"
+}

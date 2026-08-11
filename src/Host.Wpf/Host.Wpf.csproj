@@ -1,0 +1,143 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RootNamespace>WindowsClientCenter.Host</RootNamespace>
+    <AssemblyName>WindowsClientCenter</AssemblyName>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    <BuildProjectReferences>true</BuildProjectReferences>
+    <StageNativePluginsOnBuild Condition="'$(StageNativePluginsOnBuild)' == ''">true</StageNativePluginsOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plugin.Abstractions\Plugin.Abstractions.csproj" />
+    <ProjectReference Include="..\Plugin.Host\Plugin.Host.csproj" />
+    <ProjectReference Include="..\Intune.Services\Intune.Services.csproj" />
+    <ProjectReference Include="..\Plugins.BitLockerAgent\Plugins.BitLockerAgent.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Plugins.DeviceOverview\Plugins.DeviceOverview.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Plugins.DeviceActions\Plugins.DeviceActions.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Plugins.IntuneAgent\Plugins.IntuneAgent.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Plugins.MecmAgent\Plugins.MecmAgent.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Plugins.PowerShellScripts\Plugins.PowerShellScripts.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Plugins.WindowsDefenderAgent\Plugins.WindowsDefenderAgent.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Plugins.WindowsUpdateAgent\Plugins.WindowsUpdateAgent.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageReference Include="Serilog" Version="4.2.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\AppIcon.ico" />
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Local.json" Condition="Exists('appsettings.Local.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="StageNativePlugins" AfterTargets="Build" Condition="'$(StageNativePluginsOnBuild)' == 'true'">
+    <PropertyGroup>
+      <NativePluginDir>$(OutDir)plugins\native\</NativePluginDir>
+      <PowerShellScriptsDir>$(OutDir)PSScripts\</PowerShellScriptsDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(NativePluginDir)" />
+    <MakeDir Directories="$(PowerShellScriptsDir)" />
+    <RemoveDir Directories="$(NativePluginDir)runtimes" Condition="Exists('$(NativePluginDir)runtimes')" />
+    <RemoveDir Directories="$(NativePluginDir)PSScripts" Condition="Exists('$(NativePluginDir)PSScripts')" />
+    <RemoveDir Directories="$(PowerShellScriptsDir)" Condition="Exists('$(PowerShellScriptsDir)')" />
+    <MakeDir Directories="$(PowerShellScriptsDir)" />
+    <Delete Files="$(NativePluginDir)*.dll;$(NativePluginDir)*.deps.json;$(NativePluginDir)*.plugin.json;$(NativePluginDir)Invoke-WinRTWindowsUpdateClient.ps1" />
+
+    <ItemGroup>
+      <NativePluginArtifacts Include="..\Plugins.BitLockerAgent\bin\$(Configuration)\net8.0-windows\Plugins.BitLockerAgent.dll" />
+      <NativePluginArtifacts Include="..\Plugins.BitLockerAgent\bin\$(Configuration)\net8.0-windows\Plugins.BitLockerAgent.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.BitLockerAgent\bin\$(Configuration)\net8.0-windows\Plugins.BitLockerAgent.deps.json" />
+      <NativePluginArtifacts Include="..\Plugins.BitLockerAgent\bin\$(Configuration)\net8.0-windows\*.dll" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceOverview\bin\$(Configuration)\net8.0-windows\Plugins.DeviceOverview.dll" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceOverview\bin\$(Configuration)\net8.0-windows\Plugins.DeviceOverview.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceOverview\bin\$(Configuration)\net8.0-windows\Plugins.DeviceOverview.deps.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceOverview\bin\$(Configuration)\net8.0-windows\*.dll" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\Plugins.DeviceActions.dll" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\Plugins.DeviceActions.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\Plugins.DeviceActionsView.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\Plugins.DeviceServicesView.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\Plugins.DeviceInstalledSoftwareView.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\Plugins.DeviceAppxApplicationsView.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\Plugins.DeviceProcessesView.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\Plugins.DeviceProfilesView.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\Plugins.DeviceActions.deps.json" />
+      <NativePluginArtifacts Include="..\Plugins.DeviceActions\bin\$(Configuration)\net8.0-windows\*.dll" />
+      <NativePluginArtifacts Include="..\Plugins.IntuneAgent\bin\$(Configuration)\net8.0-windows\Plugins.IntuneAgent.dll" />
+      <NativePluginArtifacts Include="..\Plugins.IntuneAgent\bin\$(Configuration)\net8.0-windows\Plugins.IntuneAgent.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.IntuneAgent\bin\$(Configuration)\net8.0-windows\Plugins.IntuneAgent.deps.json" />
+      <NativePluginArtifacts Include="..\Plugins.IntuneAgent\bin\$(Configuration)\net8.0-windows\*.dll" />
+      <NativePluginArtifacts Include="..\Plugins.MecmAgent\bin\$(Configuration)\net8.0-windows\Plugins.MecmAgent.dll" />
+      <NativePluginArtifacts Include="..\Plugins.MecmAgent\bin\$(Configuration)\net8.0-windows\Plugins.MecmAgent.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.MecmAgent\bin\$(Configuration)\net8.0-windows\Plugins.MecmAgent.deps.json" />
+      <NativePluginArtifacts Include="..\Plugins.MecmAgent\bin\$(Configuration)\net8.0-windows\*.dll" />
+      <NativePluginArtifacts Include="..\Plugins.PowerShellScripts\bin\$(Configuration)\net8.0-windows\Plugins.PowerShellScripts.dll" />
+      <NativePluginArtifacts Include="..\Plugins.PowerShellScripts\bin\$(Configuration)\net8.0-windows\Plugins.PowerShellScripts.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.PowerShellScripts\bin\$(Configuration)\net8.0-windows\Plugins.PowerShellScripts.deps.json" />
+      <NativePluginArtifacts Include="..\Plugins.PowerShellScripts\bin\$(Configuration)\net8.0-windows\*.dll" />
+      <NativePluginArtifacts Include="..\Plugins.WindowsDefenderAgent\bin\$(Configuration)\net8.0-windows\Plugins.WindowsDefenderAgent.dll" />
+      <NativePluginArtifacts Include="..\Plugins.WindowsDefenderAgent\bin\$(Configuration)\net8.0-windows\Plugins.WindowsDefenderAgent.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.WindowsDefenderAgent\bin\$(Configuration)\net8.0-windows\Plugins.WindowsDefenderAgent.deps.json" />
+      <NativePluginArtifacts Include="..\Plugins.WindowsDefenderAgent\bin\$(Configuration)\net8.0-windows\*.dll" />
+      <NativePluginArtifacts Include="..\Intune.Services\bin\$(Configuration)\net8.0\Intune.Services.dll" />
+      <NativePluginArtifacts Include="..\Plugin.Abstractions\bin\$(Configuration)\net8.0\Plugin.Abstractions.dll" />
+      <NativePluginArtifacts Include="..\Plugins.WindowsUpdateAgent\bin\$(Configuration)\net8.0-windows\Plugins.WindowsUpdateAgent.dll" />
+      <NativePluginArtifacts Include="..\Plugins.WindowsUpdateAgent\bin\$(Configuration)\net8.0-windows\Plugins.WindowsUpdateAgent.plugin.json" />
+      <NativePluginArtifacts Include="..\Plugins.WindowsUpdateAgent\bin\$(Configuration)\net8.0-windows\Plugins.WindowsUpdateAgent.deps.json" />
+      <NativePluginArtifacts Include="..\Plugins.WindowsUpdateAgent\bin\$(Configuration)\net8.0-windows\*.dll"
+                             Exclude="..\Plugins.WindowsUpdateAgent\bin\$(Configuration)\net8.0-windows\Plugins.ReportingEventsLog.dll" />
+      <NativePluginRuntimeArtifacts Include="..\Plugins.BitLockerAgent\bin\$(Configuration)\net8.0-windows\runtimes\**\*" />
+      <NativePluginRuntimeArtifacts Include="..\Plugins.DeviceOverview\bin\$(Configuration)\net8.0-windows\runtimes\**\*" />
+      <NativePluginRuntimeArtifacts Include="..\Plugins.IntuneAgent\bin\$(Configuration)\net8.0-windows\runtimes\**\*" />
+      <NativePluginRuntimeArtifacts Include="..\Plugins.MecmAgent\bin\$(Configuration)\net8.0-windows\runtimes\**\*" />
+      <NativePluginRuntimeArtifacts Include="..\Plugins.PowerShellScripts\bin\$(Configuration)\net8.0-windows\runtimes\**\*" />
+      <NativePluginRuntimeArtifacts Include="..\Plugins.WindowsDefenderAgent\bin\$(Configuration)\net8.0-windows\runtimes\**\*" />
+      <NativePluginRuntimeArtifacts Include="..\Plugins.WindowsUpdateAgent\bin\$(Configuration)\net8.0-windows\runtimes\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(NativePluginArtifacts)"
+          DestinationFolder="$(NativePluginDir)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('%(NativePluginArtifacts.Identity)')" />
+
+    <Copy SourceFiles="@(NativePluginRuntimeArtifacts)"
+          DestinationFiles="@(NativePluginRuntimeArtifacts->'$(NativePluginDir)runtimes\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          Condition="Exists('%(NativePluginRuntimeArtifacts.Identity)')" />
+
+    <ItemGroup>
+      <PowerShellScriptContentArtifacts Include="..\Plugins.PowerShellScripts\bin\$(Configuration)\net8.0-windows\PSScripts\**\*" />
+      <WindowsUpdateContentArtifacts Include="..\Plugins.WindowsUpdateAgent\bin\$(Configuration)\net8.0-windows\Scripts\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(PowerShellScriptContentArtifacts)"
+          DestinationFiles="@(PowerShellScriptContentArtifacts->'$(PowerShellScriptsDir)%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          Condition="Exists('%(PowerShellScriptContentArtifacts.Identity)')" />
+
+    <Copy SourceFiles="@(WindowsUpdateContentArtifacts)"
+          DestinationFiles="@(WindowsUpdateContentArtifacts->'$(NativePluginDir)Scripts\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true"
+          Condition="Exists('%(WindowsUpdateContentArtifacts.Identity)')" />
+  </Target>
+</Project>

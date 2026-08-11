@@ -1,0 +1,151 @@
+<UserControl x:Class="WindowsClientCenter.Plugins.DeviceActions.UI.DeviceProcessesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="clr-namespace:WindowsClientCenter.Plugins.DeviceActions.Models"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <Style x:Key="SelectableValueTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource AppReadOnlyTextBoxStyle}" />
+        <Style TargetType="Button" BasedOn="{StaticResource AppCommandButtonStyle}" />
+        <Style TargetType="ComboBox" BasedOn="{StaticResource AppCommandComboBoxStyle}" />
+        <Style TargetType="DataGrid" BasedOn="{StaticResource AppDataGridStyle}">
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <WrapPanel Margin="0,0,0,10">
+            <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE72C;" Content="Refresh" Width="110" Command="{Binding RefreshCommand}" />
+            <TextBlock VerticalAlignment="Center" Margin="0,0,8,8" Text="View" FontWeight="SemiBold" />
+            <ComboBox Width="140"
+                      Margin="0,0,16,8"
+                      ItemsSource="{Binding ViewModeOptions}"
+                      DisplayMemberPath="Label"
+                      SelectedItem="{Binding SelectedViewModeOption, Mode=TwoWay}" />
+            <TextBlock VerticalAlignment="Center" Margin="0,0,8,8" Text="Auto-refresh" FontWeight="SemiBold" />
+            <ComboBox Width="120"
+                      Margin="0,0,8,8"
+                      ItemsSource="{Binding RefreshIntervalOptions}"
+                      DisplayMemberPath="Label"
+                      SelectedItem="{Binding SelectedRefreshIntervalOption, Mode=TwoWay}" />
+        </WrapPanel>
+
+        <Grid Grid.Row="1">
+            <DataGrid Visibility="{Binding IsListMode, Converter={StaticResource BoolToVisibilityConverter}}"
+                      PreviewMouseRightButtonDown="ProcessesGrid_OnPreviewMouseRightButtonDown"
+                      ItemsSource="{Binding Processes}"
+                      SelectedItem="{Binding SelectedProcess, Mode=TwoWay}">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Kill process"
+                                  Command="{Binding PlacementTarget.DataContext.KillSelectedProcessCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="180" />
+                    <DataGridTextColumn Header="PID" Binding="{Binding ProcessId}" Width="70" />
+                    <DataGridTextColumn Header="Parent PID" Binding="{Binding ParentProcessId}" Width="85" />
+                    <DataGridTextColumn Header="CPU %" Binding="{Binding CpuDisplay}" Width="75" />
+                    <DataGridTextColumn Header="RAM" Binding="{Binding WorkingSetDisplay}" Width="100" />
+                    <DataGridTextColumn Header="Private" Binding="{Binding PrivateMemoryDisplay}" Width="100" />
+                    <DataGridTextColumn Header="Start Time" Binding="{Binding StartTimeDisplay}" Width="155" />
+                    <DataGridTextColumn Header="Threads" Binding="{Binding ThreadCount}" Width="70" />
+                    <DataGridTextColumn Header="Handles" Binding="{Binding HandleCount}" Width="70" />
+                    <DataGridTextColumn Header="Command Line" Binding="{Binding CommandLine}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Grid Visibility="{Binding IsTreeMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border Padding="4,0,4,4" BorderBrush="{StaticResource ShellBorderBrush}" BorderThickness="0,0,0,1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220" />
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="85" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="155" />
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="70" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Name" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="1" Text="PID" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="2" Text="Parent PID" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="3" Text="CPU %" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="4" Text="RAM" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="5" Text="Private" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="6" Text="Start Time" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="7" Text="Threads" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="8" Text="Handles" FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="9" Text="Command Line" FontWeight="SemiBold" />
+                    </Grid>
+                </Border>
+
+                <TreeView Grid.Row="1"
+                          x:Name="ProcessTreeView"
+                          PreviewMouseRightButtonDown="ProcessTreeView_OnPreviewMouseRightButtonDown"
+                          ItemsSource="{Binding ProcessTreeRoots}"
+                          SelectedItemChanged="ProcessTreeView_OnSelectedItemChanged">
+                    <TreeView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Kill process"
+                                      Command="{Binding PlacementTarget.DataContext.KillSelectedProcessCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                        </ContextMenu>
+                    </TreeView.ContextMenu>
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type models:DeviceProcessTreeNode}" ItemsSource="{Binding Children}">
+                            <Grid Margin="0,2,0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="220" />
+                                    <ColumnDefinition Width="70" />
+                                    <ColumnDefinition Width="85" />
+                                    <ColumnDefinition Width="75" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="155" />
+                                    <ColumnDefinition Width="70" />
+                                    <ColumnDefinition Width="70" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Name}" />
+                                <TextBlock Grid.Column="1" Text="{Binding ProcessId}" />
+                                <TextBlock Grid.Column="2" Text="{Binding ParentProcessId}" />
+                                <TextBlock Grid.Column="3" Text="{Binding CpuDisplay}" />
+                                <TextBlock Grid.Column="4" Text="{Binding WorkingSetDisplay}" />
+                                <TextBlock Grid.Column="5" Text="{Binding PrivateMemoryDisplay}" />
+                                <TextBlock Grid.Column="6" Text="{Binding StartTimeDisplay}" />
+                                <TextBlock Grid.Column="7" Text="{Binding ThreadCount}" />
+                                <TextBlock Grid.Column="8" Text="{Binding HandleCount}" />
+                                <TextBlock Grid.Column="9" Text="{Binding CommandLine}" TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </Grid>
+        </Grid>
+
+        <TextBox Grid.Row="2"
+                 Margin="0,10,0,0"
+                 Text="{Binding Status}"
+                 Style="{StaticResource SelectableValueTextBoxStyle}" />
+    </Grid>
+</UserControl>

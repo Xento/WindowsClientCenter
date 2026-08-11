@@ -1,0 +1,92 @@
+<UserControl x:Class="WindowsClientCenter.Plugins.DeviceActions.UI.DeviceProfilesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SelectableValueTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource AppReadOnlyTextBoxStyle}" />
+        <Style TargetType="Button" BasedOn="{StaticResource AppCommandButtonStyle}" />
+        <Style TargetType="DataGrid" BasedOn="{StaticResource AppDataGridStyle}">
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <WrapPanel Margin="0,0,0,10">
+            <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE72C;" Content="Refresh" Width="110" Command="{Binding RefreshCommand}" />
+            <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE8EF;" Content="Calculate raw size" Width="170" Command="{Binding CalculateRawSizeCommand}" />
+            <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE9D2;" Content="Calculate policy size" Width="180" Command="{Binding CalculatePolicySizeCommand}" />
+            <Button Style="{StaticResource AppDangerIconTextButtonStyle}" Tag="&#xE74D;" Content="Delete profile" Width="150" Command="{Binding DeleteSelectedProfileCommand}" />
+        </WrapPanel>
+
+        <Border Grid.Row="1"
+                Margin="0,0,0,10"
+                Padding="10"
+                BorderBrush="{StaticResource ShellBorderBrush}"
+                BorderThickness="1"
+                Background="{StaticResource ShellSurfaceBrush}"
+                CornerRadius="4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="220" />
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="220" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,8,6" Text="Policy source" FontWeight="SemiBold" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PolicySource}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                <TextBlock Grid.Row="0" Grid.Column="3" Margin="0,0,8,6" Text="Max size" FontWeight="SemiBold" />
+                <TextBox Grid.Row="0" Grid.Column="4" Text="{Binding MaxProfileSizeText}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,8,6" Text="Registry in quota" FontWeight="SemiBold" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding IncludesRegistryInQuotaText}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" Text="Excluded paths" FontWeight="SemiBold" />
+                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" Text="{Binding ExcludedPathsText}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+            </Grid>
+        </Border>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Profiles}"
+                  SelectedItem="{Binding SelectedProfile, Mode=TwoWay}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Account" Binding="{Binding AccountName}" Width="190" />
+                <DataGridTextColumn Header="SID" Binding="{Binding Sid}" Width="220" />
+                <DataGridTextColumn Header="Local Path" Binding="{Binding LocalPath}" Width="220" />
+                <DataGridTextColumn Header="Last Use" Binding="{Binding LastUseDisplay}" Width="140" />
+                <DataGridTextColumn Header="Server Profile Path" Binding="{Binding ServerProfilePath}" Width="190" />
+                <DataGridCheckBoxColumn Header="Loaded" Binding="{Binding IsLoaded}" Width="70" />
+                <DataGridCheckBoxColumn Header="Temp" Binding="{Binding IsTemporary}" Width="60" />
+                <DataGridCheckBoxColumn Header="Roaming" Binding="{Binding IsRoaming}" Width="80" />
+                <DataGridCheckBoxColumn Header="Mandatory" Binding="{Binding IsMandatory}" Width="90" />
+                <DataGridCheckBoxColumn Header="Corrupted" Binding="{Binding IsCorrupted}" Width="90" />
+                <DataGridTextColumn Header="Raw Size" Binding="{Binding RawSizeDisplay}" Width="110" />
+                <DataGridTextColumn Header="Policy Size" Binding="{Binding PolicySizeDisplay}" Width="110" />
+                <DataGridTextColumn Header="Last Calc" Binding="{Binding LastCalculationSummary}" Width="160" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBox Grid.Row="3"
+                 Margin="0,10,0,0"
+                 Text="{Binding Status}"
+                 Style="{StaticResource SelectableValueTextBoxStyle}" />
+    </Grid>
+</UserControl>

@@ -1,0 +1,10 @@
+{
+  "id": "bitlocker-agent",
+  "displayName": "BitLocker",
+  "version": "1.0.0",
+  "capability": "View",
+  "menuPath": "Device",
+  "minHostVersion": "1.0.0",
+  "assembly": "Plugins.BitLockerAgent.dll",
+  "type": "WindowsClientCenter.Plugins.BitLockerAgent.BitLockerAgentPlugin"
+}

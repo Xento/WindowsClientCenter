@@ -1,0 +1,10 @@
+{
+  "id": "device-actions",
+  "displayName": "Run Sync (Local WinRM)",
+  "version": "1.0.0",
+  "capability": "Action",
+  "menuPath": "Device/Actions",
+  "minHostVersion": "1.0.0",
+  "assembly": "Plugins.DeviceActions.dll",
+  "type": "WindowsClientCenter.Plugins.DeviceActions.DeviceActionsPlugin"
+}

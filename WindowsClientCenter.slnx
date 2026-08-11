@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Host.Wpf/Host.Wpf.csproj" />
+    <Project Path="src/Intune.Services/Intune.Services.csproj" />
+    <Project Path="src/Plugin.Abstractions/Plugin.Abstractions.csproj" />
+    <Project Path="src/Plugin.Host/Plugin.Host.csproj" />
+    <Project Path="src/Plugins.DeviceActions/Plugins.DeviceActions.csproj" />
+    <Project Path="src/Plugins.DeviceOverview/Plugins.DeviceOverview.csproj" />
+    <Project Path="src/Plugins.WindowsUpdateAgent/Plugins.WindowsUpdateAgent.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Plugin.Host.Tests/Plugin.Host.Tests.csproj" />
+  </Folder>
+</Solution>

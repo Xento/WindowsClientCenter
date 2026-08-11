@@ -1,0 +1,226 @@
+<UserControl x:Class="WindowsClientCenter.Plugins.BitLockerAgent.UI.BitLockerAgentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SelectableValueTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource AppReadOnlyTextBoxStyle}" />
+        <Style x:Key="StatusDotStyle" TargetType="Border" BasedOn="{StaticResource AppStatusDotStyle}" />
+        <Style TargetType="Button" BasedOn="{StaticResource AppCommandButtonStyle}" />
+        <Style TargetType="ComboBox" BasedOn="{StaticResource AppCommandComboBoxStyle}" />
+        <Style TargetType="GroupBox" BasedOn="{StaticResource AppGroupBoxStyle}" />
+        <Style TargetType="DataGrid" BasedOn="{StaticResource AppDataGridStyle}">
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                    Tag="&#xE72C;"
+                    Content="Refresh"
+                    Width="120"
+                    Command="{Binding RefreshCommand}" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Header="Summary" Margin="0,0,8,8" Padding="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Host" FontWeight="Bold" />
+                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Snapshot.Host, TargetNullValue=-}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Machine" FontWeight="Bold" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Snapshot.MachineName, TargetNullValue=-}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Overall Health" FontWeight="Bold" />
+                            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                                <Border Style="{StaticResource StatusDotStyle}" Tag="{Binding Snapshot.OverallHealthLevel, TargetNullValue=Unknown}" />
+                                <TextBox Text="{Binding OverallHealthText}" Style="{StaticResource SelectableValueTextBoxStyle}" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Encrypted Volumes" FontWeight="Bold" />
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Snapshot.EncryptedVolumeCount, TargetNullValue=0}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Protected Volumes" FontWeight="Bold" />
+                            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Snapshot.ProtectedVolumeCount, TargetNullValue=0}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Suspended Volumes" FontWeight="Bold" />
+                            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Snapshot.SuspendedVolumeCount, TargetNullValue=0}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Captured At (UTC)" FontWeight="Bold" />
+                            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding Snapshot.CapturedAt, StringFormat={}{0:yyyy-MM-dd HH:mm:ss 'UTC'}, TargetNullValue=-}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Column="1" Header="Capability Warnings" Margin="8,0,0,8" Padding="8">
+                        <TextBox Text="{Binding CapabilityWarningsText}"
+                                 Style="{StaticResource SelectableValueTextBoxStyle}"
+                                 AcceptsReturn="True"
+                                 MinHeight="145"
+                                 VerticalScrollBarVisibility="Auto" />
+                    </GroupBox>
+                </Grid>
+
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Header="Policy Sources" Margin="0,0,8,8" Padding="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Detected Sources" FontWeight="Bold" />
+                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding PolicySourceSummaryText}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Policy Count" FontWeight="Bold" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Snapshot.Policies.Count, Mode=OneWay, TargetNullValue=0}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Column="1" Header="Actions" Margin="8,0,0,8" Padding="8">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="160" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Selected Volume" FontWeight="Bold" />
+                                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedVolume.MountPoint, TargetNullValue=-}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Selected Protector" FontWeight="Bold" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedProtector.ProtectorId, TargetNullValue=-}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Suspend Reboot Count" FontWeight="Bold" />
+                                <ComboBox Grid.Row="2"
+                                          Grid.Column="1"
+                                          Width="100"
+                                          ItemsSource="{Binding SuspendRebootCountOptions}"
+                                          SelectedItem="{Binding SelectedSuspendRebootCount, Mode=TwoWay}" />
+                            </Grid>
+
+                            <WrapPanel>
+                                <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE945;" Content="Suspend Protection" Width="170" Command="{Binding SuspendProtectionCommand}" />
+                                <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}" Tag="&#xE73E;" Content="Resume Protection" Width="170" Command="{Binding ResumeProtectionCommand}" />
+                                <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE8AA;" Content="Add Recovery Password" Width="190" Command="{Binding AddRecoveryPasswordProtectorCommand}" />
+                                <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE8A5;" Content="Back Up Recovery Password" Width="210" Command="{Binding BackupRecoveryPasswordCommand}" />
+                                <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}" Tag="&#xE72C;" Content="Rotate Recovery Password" Width="200" Command="{Binding RotateRecoveryPasswordCommand}" />
+                                <Button Style="{StaticResource AppDangerIconTextButtonStyle}" Tag="&#xE74D;" Content="Remove Recovery Password" Width="210" Command="{Binding RemoveRecoveryPasswordProtectorCommand}" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </GroupBox>
+                </Grid>
+
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Header="Volumes" Margin="0,0,8,8" Padding="8">
+                        <DataGrid ItemsSource="{Binding Volumes}"
+                                  SelectedItem="{Binding SelectedVolume, Mode=TwoWay}"
+                                  Height="280">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Mount" Binding="{Binding MountPoint}" Width="70" />
+                                <DataGridTextColumn Header="Type" Binding="{Binding VolumeType}" Width="110" />
+                                <DataGridTextColumn Header="Protection" Binding="{Binding ProtectionStatusText}" Width="130" />
+                                <DataGridTextColumn Header="Volume Status" Binding="{Binding VolumeStatusText}" Width="150" />
+                                <DataGridTextColumn Header="Lock" Binding="{Binding LockStatusText}" Width="110" />
+                                <DataGridTextColumn Header="Encrypted %" Binding="{Binding EncryptionPercentage}" Width="90" />
+                                <DataGridTextColumn Header="Method" Binding="{Binding EncryptionMethodText}" Width="140" />
+                                <DataGridTextColumn Header="Auto Unlock" Binding="{Binding AutoUnlockText}" Width="100" />
+                                <DataGridTextColumn Header="Suspend Count" Binding="{Binding SuspendRebootCount}" Width="90" />
+                                <DataGridTextColumn Header="Health" Binding="{Binding HealthLevel}" Width="80" />
+                                <DataGridTextColumn Header="Compliance" Binding="{Binding ComplianceStatusText}" Width="150" />
+                                <DataGridTextColumn Header="Configured Targets" Binding="{Binding ConfiguredBackupTargetsText}" Width="180" />
+                                <DataGridTextColumn Header="Assessment" Binding="{Binding BackupAssessmentText}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Column="1" Header="Protectors" Margin="8,0,0,8" Padding="8">
+                        <DataGrid ItemsSource="{Binding Protectors}"
+                                  SelectedItem="{Binding SelectedProtector, Mode=TwoWay}"
+                                  Height="280">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Type" Binding="{Binding ProtectorType}" Width="120" />
+                                <DataGridTextColumn Header="Label" Binding="{Binding FriendlyLabel}" Width="120" />
+                                <DataGridTextColumn Header="ID" Binding="{Binding ProtectorId}" Width="200" />
+                                <DataGridTextColumn Header="Recovery" Binding="{Binding IsRecoveryPassword}" Width="80" />
+                                <DataGridTextColumn Header="Removable" Binding="{Binding IsRemovable}" Width="80" />
+                                <DataGridTextColumn Header="Backup Targets" Binding="{Binding BackupTargetsText}" Width="140" />
+                                <DataGridTextColumn Header="Last Action" Binding="{Binding LastActionStatusText}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </GroupBox>
+                </Grid>
+
+                <GroupBox Header="Configured Policies" Margin="0,0,0,8" Padding="8">
+                    <DataGrid ItemsSource="{Binding Snapshot.Policies}"
+                              Height="220">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Setting" Binding="{Binding SettingName}" Width="220" />
+                            <DataGridTextColumn Header="Value" Binding="{Binding ValueDisplayText}" Width="260" />
+                            <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="150" />
+                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="140" />
+                            <DataGridTextColumn Header="Path" Binding="{Binding SourcePath}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+
+                <GroupBox Header="Session Operation Log" Margin="0,0,0,8" Padding="8">
+                        <DataGrid ItemsSource="{Binding OperationLogEntries}"
+                                  Height="220">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Time (UTC)" Binding="{Binding TimestampUtc, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" Width="150" />
+                                <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="80" />
+                                <DataGridTextColumn Header="Target" Binding="{Binding Target}" Width="80" />
+                                <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="220" />
+                                <DataGridTextColumn Header="Details" Binding="{Binding DetailsText}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <TextBox Grid.Row="2"
+                 Margin="0,2,0,0"
+                 Text="{Binding Status}"
+                 Style="{StaticResource SelectableValueTextBoxStyle}" />
+    </Grid>
+</UserControl>

@@ -1,0 +1,32 @@
+# Keep repository text files deterministic across Windows, WSL, and Linux.
+* text=auto eol=lf
+
+# Native Windows formats that are commonly rewritten with CRLF.
+*.sln text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Scripts must retain Unix-compatible line endings.
+*.sh text eol=lf
+*.bash text eol=lf
+*.ps1 text eol=lf
+*.psm1 text eol=lf
+*.psd1 text eol=lf
+
+# Binary assets must never be line-ending normalized.
+*.dll binary
+*.exe binary
+*.pdb binary
+*.nupkg binary
+*.snk binary
+*.zip binary
+*.7z binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

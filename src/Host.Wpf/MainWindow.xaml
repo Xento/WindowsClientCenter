@@ -1,0 +1,611 @@
+<Window x:Class="WindowsClientCenter.Host.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:viewModels="clr-namespace:WindowsClientCenter.Host.ViewModels"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle}"
+        Icon="Assets/AppIcon.ico"
+        Width="1600"
+        Height="960"
+        WindowStartupLocation="CenterScreen">
+    <Window.TaskbarItemInfo>
+        <shell:TaskbarItemInfo ProgressState="None"
+                               Overlay="{Binding DataContext.TaskbarOverlayImage, RelativeSource={RelativeSource AncestorType=Window}}" />
+    </Window.TaskbarItemInfo>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <Style x:Key="RibbonActionButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource AppCommandButtonStyle}">
+            <Setter Property="MinWidth" Value="110" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+
+        <Style x:Key="RibbonHostComboBoxStyle"
+               TargetType="ComboBox"
+               BasedOn="{StaticResource AppCommandComboBoxStyle}">
+            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="RibbonSplitPrimaryButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource AppPrimaryCommandButtonStyle}">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="MinWidth" Value="92" />
+        </Style>
+
+        <Style x:Key="RibbonSplitDropDownButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource AppCommandButtonStyle}">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="MinWidth" Value="28" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+        </Style>
+
+        <Style x:Key="RibbonGroupBorderStyle" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{StaticResource ShellBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="{StaticResource ShellPanelBrush}" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="Padding" Value="8,6,8,4" />
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+
+        <Style x:Key="NavigationTreeItemStyle" TargetType="TreeViewItem">
+            <Setter Property="Margin" Value="2,1" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Foreground" Value="{StaticResource ShellBodyTextBrush}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+        </Style>
+
+        <DataTemplate DataType="{x:Type viewModels:RibbonButtonItem}">
+            <Button Style="{StaticResource RibbonActionButtonStyle}"
+                    Margin="0,0,6,0"
+                    Width="{Binding Width}"
+                    MinWidth="{Binding MinWidth}"
+                    Height="{Binding Height}"
+                    Padding="{Binding Padding}"
+                    FontSize="{Binding FontSize}"
+                    IsEnabled="{Binding IsEnabled}"
+                    Content="{Binding Text}"
+                    Command="{Binding Command}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:RibbonCheckBoxItem}">
+            <CheckBox Margin="0,0,6,0"
+                      Width="{Binding Width}"
+                      MinWidth="{Binding MinWidth}"
+                      Height="{Binding Height}"
+                      Padding="{Binding Padding}"
+                      FontSize="{Binding FontSize}"
+                      IsEnabled="{Binding IsEnabled}"
+                      VerticalAlignment="Center"
+                      Content="{Binding Text}"
+                      IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Command="{Binding Command}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:RibbonLabelItem}">
+            <TextBlock Margin="0,0,6,0"
+                       Width="{Binding Width}"
+                       MinWidth="{Binding MinWidth}"
+                       Height="{Binding Height}"
+                       Padding="{Binding Padding}"
+                       FontSize="{Binding FontSize}"
+                       VerticalAlignment="Center"
+                       Text="{Binding Text}" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:RibbonSeparatorItem}">
+            <Border Margin="2,0,8,0"
+                    Width="1"
+                    Height="{Binding Height}"
+                    VerticalAlignment="Center"
+                    Background="#C8D2E2" />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewModels:RibbonMenuButtonItem}">
+            <Button Style="{StaticResource RibbonActionButtonStyle}"
+                    Margin="0,0,6,0"
+                    Width="{Binding Width}"
+                    MinWidth="{Binding MinWidth}"
+                    Height="{Binding Height}"
+                    Padding="{Binding Padding}"
+                    FontSize="{Binding FontSize}"
+                    IsEnabled="{Binding IsEnabled}"
+                    Content="{Binding Text}"
+                    Click="RibbonMenuButton_OnClick">
+                <Button.ContextMenu>
+                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
+                                 ItemsSource="{Binding MenuItems}">
+                        <ContextMenu.Resources>
+                            <Style TargetType="{x:Type MenuItem}">
+                                <Setter Property="Header" Value="{Binding Text}" />
+                                <Setter Property="ItemsSource" Value="{Binding Children}" />
+                                <Setter Property="Command" Value="{Binding Command}" />
+                                <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+                            </Style>
+                        </ContextMenu.Resources>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="260" />
+            <RowDefinition Height="6" />
+            <RowDefinition Height="180" MinHeight="110" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                BorderBrush="{StaticResource ShellBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Background="#DDE6F5"
+                Padding="8,6">
+            <DockPanel LastChildFill="True">
+                <StackPanel DockPanel.Dock="Right"
+                            Margin="12,0,0,0"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                    <Border MinWidth="205"
+                            MaxWidth="260"
+                            Margin="0,0,8,0"
+                            Padding="10,4"
+                            Background="#F4F8DD"
+                            BorderBrush="#C8D69A"
+                            BorderThickness="1"
+                            CornerRadius="12">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Opacity" Value="0" />
+                                <Setter Property="IsHitTestVisible" Value="False" />
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsHostBusyVisible}" Value="True">
+                                        <Setter Property="Opacity" Value="1" />
+                                        <Setter Property="IsHitTestVisible" Value="True" />
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Border.ToolTip>
+                            <ToolTip MaxWidth="420">
+                                <TextBlock Text="{Binding HostBusyToolTip}" TextWrapping="Wrap" />
+                            </ToolTip>
+                        </Border.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <ProgressBar Width="42"
+                                         Height="8"
+                                         Margin="0,0,8,0"
+                                         VerticalAlignment="Center"
+                                         IsIndeterminate="True" />
+                            <TextBlock MaxWidth="190"
+                                       VerticalAlignment="Center"
+                                       FontWeight="SemiBold"
+                                       Foreground="#44551C"
+                                       Text="{Binding HostBusyShortStatus}"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Padding="8,4"
+                            Background="#EDF3FB"
+                            BorderBrush="#C8D2E2"
+                            BorderThickness="1"
+                            CornerRadius="10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="0,0,6,0"
+                                       VerticalAlignment="Center"
+                                       FontWeight="Bold"
+                                       Foreground="#355372"
+                                       Text="Env:" />
+                            <TextBlock VerticalAlignment="Center"
+                                       Foreground="#355372"
+                                       Text="{Binding EnvironmentName}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled"
+                              Padding="0,0,4,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Border Style="{StaticResource RibbonGroupBorderStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="Host:" FontWeight="Bold" />
+                                    <ComboBox Width="160"
+                                              Style="{StaticResource RibbonHostComboBoxStyle}"
+                                              IsEditable="True"
+                                              IsTextSearchEnabled="False"
+                                              StaysOpenOnEdit="True"
+                                              PreviewKeyDown="HostComboBox_OnPreviewKeyDown"
+                                              ItemsSource="{Binding RecentHosts}"
+                                              Text="{Binding HostInputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}"
+                                            MinWidth="95"
+                                            Tag="&#xE8CC;"
+                                            Content="Connect"
+                                            Command="{Binding ConnectHostCommand}" />
+                                    <Button Width="34"
+                                            MinWidth="34"
+                                            Height="30"
+                                            Margin="0,0,8,0"
+                                            Padding="0"
+                                            ToolTip="{Binding HostPingIndicatorToolTip}"
+                                            Command="{Binding PingHostCommand}">
+                                        <Ellipse Width="14"
+                                                 Height="14"
+                                                 Stroke="#34495E"
+                                                 StrokeThickness="1"
+                                                 Fill="{Binding HostPingIndicatorBrush}" />
+                                    </Button>
+                                </StackPanel>
+                                <TextBlock Grid.Row="1" Margin="0,6,0,0" HorizontalAlignment="Center" Text="Target Device" Foreground="#556A88" FontWeight="SemiBold" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource RibbonGroupBorderStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <Grid Margin="0,0,8,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0"
+                                                Style="{StaticResource RibbonSplitPrimaryButtonStyle}"
+                                                Command="{Binding OpenRemotePowerShellCommand}"
+                                                IsEnabled="{Binding CanOpenRemoteHostTools}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0,0,7,0"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="14"
+                                                           Text="&#xE756;" />
+                                                <TextBlock VerticalAlignment="Center"
+                                                           Text="Open" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Grid.Column="1"
+                                                x:Name="RemoteShellMenuButton"
+                                                Style="{StaticResource RibbonSplitDropDownButtonStyle}"
+                                                Click="RibbonMenuButton_OnClick"
+                                                IsEnabled="{Binding CanOpenRemoteHostTools}">
+                                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                       FontSize="10"
+                                                       Text="&#xE70D;" />
+                                            <Button.ContextMenu>
+                                                <ContextMenu Placement="Bottom"
+                                                             PlacementTarget="{Binding ElementName=RemoteShellMenuButton}">
+                                                    <MenuItem Header="Open PowerShell Session"
+                                                              Command="{Binding OpenRemotePowerShellCommand}" />
+                                                    <MenuItem Header="Open PowerShell Session (No Profile)"
+                                                              Command="{Binding OpenRemotePowerShellNoProfileCommand}" />
+                                                    <MenuItem Header="Open PsExec"
+                                                              Command="{Binding OpenRemotePsExecCommand}" />
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                    </Grid>
+
+                                    <ItemsControl ItemsSource="{Binding PowerShellRibbonControls}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </StackPanel>
+                                <TextBlock Grid.Row="1" Margin="0,6,0,0" HorizontalAlignment="Center" Text="Powershell" Foreground="#556A88" FontWeight="SemiBold" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource RibbonGroupBorderStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <Grid Margin="0,0,8,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0"
+                                                Style="{StaticResource RibbonSplitPrimaryButtonStyle}"
+                                                Command="{Binding OpenDefaultExplorerTargetCommand}"
+                                                IsEnabled="{Binding CanOpenExplorerTargets}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0,0,7,0"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="14"
+                                                           Text="&#xE8B7;" />
+                                                <TextBlock VerticalAlignment="Center"
+                                                           Text="Open" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Grid.Column="1"
+                                                x:Name="ExplorerMenuButton"
+                                                Style="{StaticResource RibbonSplitDropDownButtonStyle}"
+                                                Click="RibbonMenuButton_OnClick"
+                                                IsEnabled="{Binding HasExplorerTargets}">
+                                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                       FontSize="10"
+                                                       Text="&#xE70D;" />
+                                            <Button.ContextMenu>
+                                                <ContextMenu Placement="Bottom"
+                                                             PlacementTarget="{Binding ElementName=ExplorerMenuButton}"
+                                                             DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                    <ContextMenu.ItemsSource>
+                                                        <Binding Path="ExplorerTargets" />
+                                                    </ContextMenu.ItemsSource>
+                                                    <ContextMenu.Resources>
+                                                        <DataTemplate x:Key="ExplorerTargetMenuHeaderTemplate">
+                                                            <TextBlock Margin="6,0,0,0"
+                                                                       VerticalAlignment="Center"
+                                                                       Text="{Binding Name}" />
+                                                        </DataTemplate>
+                                                        <DataTemplate x:Key="ExplorerTargetGroupHeaderTemplate">
+                                                            <TextBlock Margin="-26,0,0,0"
+                                                                       VerticalAlignment="Center"
+                                                                       FontSize="11"
+                                                                       FontWeight="Bold"
+                                                                       Foreground="#344B6C"
+                                                                       Text="{Binding Name}" />
+                                                        </DataTemplate>
+                                                        <Style TargetType="{x:Type MenuItem}">
+                                                            <Setter Property="Header" Value="{Binding}" />
+                                                            <Setter Property="HeaderTemplate" Value="{StaticResource ExplorerTargetMenuHeaderTemplate}" />
+                                                            <Setter Property="ItemsSource" Value="{Binding Children}" />
+                                                            <Setter Property="Icon">
+                                                                <Setter.Value>
+                                                                    <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                                               FontSize="14"
+                                                                               VerticalAlignment="Center"
+                                                                               HorizontalAlignment="Center"
+                                                                               Foreground="#2D5F94"
+                                                                               Text="{Binding IconGlyph}" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+                                                            <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsOpenTarget}" Value="True">
+                                                                    <Setter Property="Command" Value="{Binding DataContext.OpenExplorerTargetCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                                                    <Setter Property="CommandParameter" Value="{Binding}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsGroupHeader}" Value="True">
+                                                                    <Setter Property="HeaderTemplate" Value="{StaticResource ExplorerTargetGroupHeaderTemplate}" />
+                                                                    <Setter Property="Icon" Value="{x:Null}" />
+                                                                    <Setter Property="IsHitTestVisible" Value="False" />
+                                                                    <Setter Property="Padding" Value="0,8,18,3" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContextMenu.Resources>
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+                                <TextBlock Grid.Row="1" Margin="0,6,0,0" HorizontalAlignment="Center" Text="Explorer" Foreground="#556A88" FontWeight="SemiBold" />
+                            </Grid>
+                        </Border>
+
+                        <ItemsControl ItemsSource="{Binding RibbonGroups}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type viewModels:RibbonGroupItem}">
+                                    <Border Style="{StaticResource RibbonGroupBorderStyle}"
+                                            Background="{Binding Background, TargetNullValue=#F8FAFD}"
+                                            BorderBrush="{Binding BorderBrush, TargetNullValue=#C8D2E2}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <ItemsControl Grid.Row="0" ItemsSource="{Binding Controls}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                            <TextBlock Grid.Row="1"
+                                                       Margin="0,6,0,0"
+                                                       HorizontalAlignment="Center"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{Binding TitleForeground, TargetNullValue=#556A88}"
+                                                       Text="{Binding Title}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300" MinWidth="220" />
+                <ColumnDefinition Width="6" />
+                <ColumnDefinition Width="*" MinWidth="400" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    BorderBrush="{StaticResource ShellBorderBrush}"
+                    BorderThickness="0,0,1,0"
+                    Background="{StaticResource ShellAccentPanelBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="#DEE8F8"
+                            BorderBrush="{StaticResource ShellBorderBrush}"
+                            BorderThickness="0,0,0,1"
+                            Padding="10,7">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" Text="Client Areas" FontWeight="Bold" FontSize="13" Foreground="#1F3552" />
+                            <TextBlock DockPanel.Dock="Right" Text="Navigation" Foreground="#536B88" />
+                        </DockPanel>
+                    </Border>
+
+                    <TreeView Grid.Row="1"
+                              Margin="6"
+                              ItemsSource="{Binding Navigation}"
+                              SelectedItemChanged="NavigationTree_OnSelectedItemChanged"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              ItemContainerStyle="{StaticResource NavigationTreeItemStyle}">
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type viewModels:NavigationNode}" ItemsSource="{Binding Children}">
+                                <Border Padding="6,4" CornerRadius="3">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TreeViewItem}, Path=IsMouseOver}" Value="True">
+                                                    <Setter Property="Background" Value="#EAF1FF" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TreeViewItem}, Path=IsSelected}" Value="True">
+                                                    <Setter Property="Background" Value="#D7E7FF" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Margin="0,0,7,0"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="#355372"
+                                                   Text="{Binding IconGlyph}" />
+                                        <TextBlock Text="{Binding Title}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#22364F" />
+                                                    <Setter Property="FontWeight" Value="Normal" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TreeViewItem}, Path=IsSelected}" Value="True">
+                                                            <Setter Property="Foreground" Value="#103A72" />
+                                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="#C3CDDC"
+                          ShowsPreview="True"
+                          ResizeDirection="Columns"
+                          ResizeBehavior="PreviousAndNext" />
+
+            <Grid Grid.Column="2">
+                <Grid Margin="8">
+                    <Border BorderBrush="#D0D0D0" BorderThickness="1" CornerRadius="2">
+                        <ContentControl Content="{Binding CurrentContent}" />
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <GridSplitter Grid.Row="2"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Background="#C3CDDC"
+                      ShowsPreview="True"
+                      ResizeDirection="Rows"
+                      ResizeBehavior="PreviousAndNext" />
+
+        <Border Grid.Row="3" BorderBrush="#D0D0D0" BorderThickness="0,1,0,0" Padding="8">
+            <TextBox x:Name="StatusLogTextBox"
+                     Text="{Binding LogText}"
+                     TextChanged="StatusLogTextBox_OnTextChanged"
+                     IsReadOnly="True"
+                     IsReadOnlyCaretVisible="True"
+                     AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Auto"
+                     TextWrapping="NoWrap"
+                     FontFamily="Consolas"
+                     FontSize="12" />
+        </Border>
+
+        <Border Grid.RowSpan="4"
+                Panel.ZIndex="1000"
+                Background="#88E7EDF7"
+                Visibility="{Binding IsConnecting, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid>
+                <Border Width="360"
+                        Padding="24"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="#FDFEFF"
+                        BorderBrush="#B8C8DE"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Center"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="#173758"
+                                   Text="Connecting" />
+                        <TextBlock Margin="0,10,0,0"
+                                   HorizontalAlignment="Center"
+                                   Foreground="#536B88"
+                                   Text="{Binding HostInputText}" />
+                        <ProgressBar Margin="0,18,0,0"
+                                     Height="10"
+                                     IsIndeterminate="True"
+                                     Foreground="#3A76B8"
+                                     Background="#DCE7F5" />
+                        <TextBlock Margin="0,14,0,0"
+                                   HorizontalAlignment="Center"
+                                   Foreground="#617A98"
+                                   Text="Running ping and connectivity checks..." />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,326 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="ShellBorderBrush" Color="#CCD6E3" />
+    <SolidColorBrush x:Key="ShellMutedBorderBrush" Color="#D9E3F0" />
+    <SolidColorBrush x:Key="ShellHeaderTopBrush" Color="#E8F0FB" />
+    <SolidColorBrush x:Key="ShellHeaderBottomBrush" Color="#D4E2F7" />
+    <SolidColorBrush x:Key="ShellCommandBarBrush" Color="#EEF3FA" />
+    <SolidColorBrush x:Key="ShellSurfaceBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ShellPanelBrush" Color="#F8FAFD" />
+    <SolidColorBrush x:Key="ShellAccentPanelBrush" Color="#F4F7FC" />
+    <SolidColorBrush x:Key="ShellStrongTextBrush" Color="#1F2D3D" />
+    <SolidColorBrush x:Key="ShellBodyTextBrush" Color="#23364D" />
+    <SolidColorBrush x:Key="ShellMutedTextBrush" Color="#4A5D78" />
+    <SolidColorBrush x:Key="ShellAccentBrush" Color="#0B5CAD" />
+    <SolidColorBrush x:Key="ShellSuccessBrush" Color="#1A7F37" />
+    <SolidColorBrush x:Key="ShellWarningBrush" Color="#B07D00" />
+    <SolidColorBrush x:Key="ShellDangerBrush" Color="#C62828" />
+    <SolidColorBrush x:Key="ShellNeutralStatusBrush" Color="#8A8A8A" />
+
+    <Style x:Key="AppCommandButtonStyle" TargetType="Button">
+        <Setter Property="MinWidth" Value="126" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Padding" Value="12,2" />
+        <Setter Property="Margin" Value="0,0,8,8" />
+        <Setter Property="Background" Value="{StaticResource ShellSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ShellBorderBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource ShellBodyTextBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="#F3F7FD" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="#AAC2E2" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="#E3ECF9" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="#7FA5D8" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Opacity" Value="0.55" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AppPrimaryCommandButtonStyle"
+           TargetType="Button"
+           BasedOn="{StaticResource AppCommandButtonStyle}">
+        <Setter Property="Background" Value="#EAF2FF" />
+        <Setter Property="BorderBrush" Value="#A9C3E4" />
+        <Setter Property="Foreground" Value="#1D4876" />
+    </Style>
+
+    <Style x:Key="AppDangerCommandButtonStyle"
+           TargetType="Button"
+           BasedOn="{StaticResource AppCommandButtonStyle}">
+        <Setter Property="Background" Value="#FDEEEE" />
+        <Setter Property="BorderBrush" Value="#E4B6B6" />
+        <Setter Property="Foreground" Value="#8A2222" />
+    </Style>
+
+    <Style x:Key="AppIconTextButtonStyle"
+           TargetType="Button"
+           BasedOn="{StaticResource AppCommandButtonStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Root"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4"
+                            SnapsToDevicePixels="True">
+                        <StackPanel Margin="{TemplateBinding Padding}"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <TextBlock Margin="0,0,8,0"
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="14"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       Text="{TemplateBinding Tag}"
+                                       VerticalAlignment="Center" />
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="#F3F7FD" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="#AAC2E2" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="#E3ECF9" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="#7FA5D8" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Opacity" Value="0.55" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AppPrimaryIconTextButtonStyle"
+           TargetType="Button"
+           BasedOn="{StaticResource AppIconTextButtonStyle}">
+        <Setter Property="Background" Value="#EAF2FF" />
+        <Setter Property="BorderBrush" Value="#A9C3E4" />
+        <Setter Property="Foreground" Value="#1D4876" />
+    </Style>
+
+    <Style x:Key="AppDangerIconTextButtonStyle"
+           TargetType="Button"
+           BasedOn="{StaticResource AppIconTextButtonStyle}">
+        <Setter Property="Background" Value="#FDEEEE" />
+        <Setter Property="BorderBrush" Value="#E4B6B6" />
+        <Setter Property="Foreground" Value="#8A2222" />
+    </Style>
+
+    <Style x:Key="AppReadOnlyTextBoxStyle" TargetType="TextBox">
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="IsReadOnlyCaretVisible" Value="True" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="AcceptsReturn" Value="False" />
+        <Setter Property="Foreground" Value="#111111" />
+    </Style>
+
+    <Style x:Key="AppDataGridStyle" TargetType="DataGrid">
+        <Setter Property="AutoGenerateColumns" Value="False" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="CanUserAddRows" Value="False" />
+        <Setter Property="CanUserDeleteRows" Value="False" />
+        <Setter Property="ClipboardCopyMode" Value="ExcludeHeader" />
+        <Setter Property="EnableRowVirtualization" Value="True" />
+        <Setter Property="EnableColumnVirtualization" Value="True" />
+        <Setter Property="HeadersVisibility" Value="Column" />
+        <Setter Property="GridLinesVisibility" Value="Horizontal" />
+        <Setter Property="RowHeaderWidth" Value="0" />
+        <Setter Property="AlternationCount" Value="2" />
+        <Setter Property="AlternatingRowBackground" Value="#F7FAFF" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="BorderBrush" Value="{StaticResource ShellBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="{StaticResource ShellSurfaceBrush}" />
+        <Setter Property="MinRowHeight" Value="26" />
+        <Setter Property="CellStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Padding" Value="8,1,8,0" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AppGroupBoxStyle" TargetType="GroupBox">
+        <Setter Property="Margin" Value="0,0,0,8" />
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="Background" Value="{StaticResource ShellSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ShellBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource ShellStrongTextBrush}" />
+    </Style>
+
+    <Style x:Key="AppCommandCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="Margin" Value="0,4,10,8" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{StaticResource ShellBodyTextBrush}" />
+    </Style>
+
+    <Style x:Key="AppCommandComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Margin" Value="0,0,8,8" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="BorderBrush" Value="{StaticResource ShellBorderBrush}" />
+        <Setter Property="Background" Value="{StaticResource ShellSurfaceBrush}" />
+    </Style>
+
+    <Style x:Key="AppLoadingOverlayStyle" TargetType="Border">
+        <Setter Property="Background" Value="#CCFFFFFF" />
+        <Setter Property="BorderBrush" Value="#CCD8E6" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Panel.ZIndex" Value="5" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+    </Style>
+
+    <Style x:Key="AppStatusDotStyle" TargetType="Border">
+        <Setter Property="Width" Value="12" />
+        <Setter Property="Height" Value="12" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Margin" Value="0,3,6,0" />
+        <Setter Property="Background" Value="{StaticResource ShellNeutralStatusBrush}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Green">
+                <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Protected">
+                <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Ready">
+                <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Enabled">
+                <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Running">
+                <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Connected">
+                <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Authenticated">
+                <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Yellow">
+                <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Configured">
+                <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Protection suspended">
+                <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Present with issues">
+                <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Restart required">
+                <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Adapter detected">
+                <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Red">
+                <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Disabled">
+                <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Not protected">
+                <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Not ready">
+                <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Not present">
+                <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Not connected">
+                <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Not authenticated">
+                <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="AppShellOuterBorderStyle" TargetType="Border">
+        <Setter Property="Margin" Value="8" />
+        <Setter Property="BorderBrush" Value="{StaticResource ShellBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="{StaticResource ShellSurfaceBrush}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+    </Style>
+
+    <Style x:Key="AppShellHeaderBorderStyle" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{StaticResource ShellBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="10,8" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="{Binding Source={StaticResource ShellHeaderTopBrush}, Path=Color}" Offset="0" />
+                    <GradientStop Color="{Binding Source={StaticResource ShellHeaderBottomBrush}, Path=Color}" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AppShellCommandBarBorderStyle" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{StaticResource ShellBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Background" Value="{StaticResource ShellCommandBarBrush}" />
+        <Setter Property="Padding" Value="8,6" />
+    </Style>
+
+    <Style x:Key="AppShellHeaderTitleTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource ShellStrongTextBrush}" />
+    </Style>
+
+    <Style x:Key="AppShellHeaderSubtitleTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="#3D4F65" />
+    </Style>
+</ResourceDictionary>

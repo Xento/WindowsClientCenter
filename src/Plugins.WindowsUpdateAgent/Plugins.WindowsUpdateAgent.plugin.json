@@ -1,0 +1,10 @@
+{
+  "id": "windows-update-agent",
+  "displayName": "Windows Update Agent",
+  "version": "1.0.0",
+  "capability": "View",
+  "menuPath": "Windows Update Agent",
+  "minHostVersion": "1.0.0",
+  "assembly": "Plugins.WindowsUpdateAgent.dll",
+  "type": "WindowsClientCenter.Plugins.WindowsUpdateAgent.WindowsUpdateAgentPlugin"
+}

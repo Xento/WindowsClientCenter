@@ -1,0 +1,68 @@
+<UserControl x:Class="WindowsClientCenter.Plugins.DeviceActions.UI.DeviceInstalledSoftwareView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="SelectableValueTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource AppReadOnlyTextBoxStyle}" />
+        <Style TargetType="Button" BasedOn="{StaticResource AppCommandButtonStyle}" />
+        <Style TargetType="DataGrid" BasedOn="{StaticResource AppDataGridStyle}">
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <WrapPanel Margin="0,0,0,10">
+            <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE72C;" Content="Refresh" Width="110" Command="{Binding RefreshCommand}" />
+            <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}" Tag="&#xE90F;" Content="Repair MSI" Width="125" Command="{Binding RepairSelectedMsiCommand}" />
+            <Button Style="{StaticResource AppDangerIconTextButtonStyle}" Tag="&#xE74D;" Content="Uninstall MSI" Width="140" Command="{Binding UninstallSelectedMsiCommand}" />
+            <Button Style="{StaticResource AppDangerIconTextButtonStyle}" Tag="&#xE74D;" Content="Quiet Uninstall" Width="155" Command="{Binding QuietUninstallSelectedCommand}" />
+            <Button Style="{StaticResource AppDangerIconTextButtonStyle}" Tag="&#xE74D;" Content="Force Remove Entry" Width="180" Command="{Binding ForceRemoveSelectedRegistryEntryCommand}" />
+        </WrapPanel>
+
+        <DataGrid Grid.Row="1"
+                  PreviewMouseRightButtonDown="InstalledSoftwareGrid_OnPreviewMouseRightButtonDown"
+                  ItemsSource="{Binding Software}"
+                  SelectedItem="{Binding SelectedSoftware, Mode=TwoWay}">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Repair MSI"
+                              Command="{Binding PlacementTarget.DataContext.RepairSelectedMsiCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                    <MenuItem Header="Uninstall MSI"
+                              Command="{Binding PlacementTarget.DataContext.UninstallSelectedMsiCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                    <MenuItem Header="Quiet Uninstall"
+                              Command="{Binding PlacementTarget.DataContext.QuietUninstallSelectedCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                    <Separator />
+                    <MenuItem Header="Force Remove Registry Entry"
+                              Command="{Binding PlacementTarget.DataContext.ForceRemoveSelectedRegistryEntryCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="260" />
+                <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="120" />
+                <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher}" Width="180" />
+                <DataGridTextColumn Header="Install Date" Binding="{Binding InstallDate}" Width="110" />
+                <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="150" />
+                <DataGridTextColumn Header="MSI" Binding="{Binding MsiDisplay}" Width="70" />
+                <DataGridTextColumn Header="Quiet Uninstall" Binding="{Binding QuietUninstallDisplay}" Width="120" />
+                <DataGridTextColumn Header="Install Location" Binding="{Binding InstallLocation}" Width="250" />
+                <DataGridTextColumn Header="Product Code" Binding="{Binding EffectiveProductCode}" Width="260" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBox Grid.Row="2"
+                 Margin="0,10,0,0"
+                 Text="{Binding Status}"
+                 Style="{StaticResource SelectableValueTextBoxStyle}" />
+    </Grid>
+</UserControl>

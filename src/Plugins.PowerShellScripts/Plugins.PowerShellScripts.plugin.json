@@ -1,0 +1,10 @@
+{
+  "id": "powershell-scripts",
+  "displayName": "PowerShell Scripts",
+  "version": "1.0.0",
+  "capability": "Ribbon",
+  "menuPath": "Powershell",
+  "minHostVersion": "1.0.0",
+  "assembly": "Plugins.PowerShellScripts.dll",
+  "type": "WindowsClientCenter.Plugins.PowerShellScripts.PowerShellScriptsPlugin"
+}

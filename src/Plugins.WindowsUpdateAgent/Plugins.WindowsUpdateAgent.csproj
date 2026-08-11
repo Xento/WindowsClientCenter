@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RootNamespace>WindowsClientCenter.Plugins.WindowsUpdateAgent</RootNamespace>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plugin.Abstractions\Plugin.Abstractions.csproj" />
+    <ProjectReference Include="..\Intune.Services\Intune.Services.csproj" />
+    <ProjectReference Include="..\Shared.Diagnostics\Shared.Diagnostics.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+    <PackageReference Include="System.Management.Automation" Version="7.4.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Plugins.WindowsUpdateAgent.plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\Invoke-WinRTWindowsUpdateClient.ps1" Link="Scripts\Invoke-WinRTWindowsUpdateClient.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="..\..\Invoke-WinRTWindowsUpdateClient.ps1" Link="Scripts\Invoke-WinRTWindowsUpdateClient.ps1" />
+  </ItemGroup>
+</Project>

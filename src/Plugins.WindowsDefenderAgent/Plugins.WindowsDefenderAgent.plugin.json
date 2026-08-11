@@ -1,0 +1,10 @@
+{
+  "id": "windows-defender-agent",
+  "displayName": "Windows Defender",
+  "version": "1.0.0",
+  "capability": "View",
+  "menuPath": "Defender",
+  "minHostVersion": "1.0.0",
+  "assembly": "Plugins.WindowsDefenderAgent.dll",
+  "type": "WindowsClientCenter.Plugins.WindowsDefenderAgent.WindowsDefenderAgentPlugin"
+}

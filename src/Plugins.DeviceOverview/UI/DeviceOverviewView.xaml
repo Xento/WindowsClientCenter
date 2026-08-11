@@ -1,0 +1,1066 @@
+<UserControl x:Class="WindowsClientCenter.Plugins.DeviceOverview.UI.DeviceOverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <Style x:Key="PatchStatusTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#3D4F65" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LocalSnapshot.PatchStatusLevel}" Value="Green">
+                    <Setter Property="Foreground" Value="#1E7A36" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LocalSnapshot.PatchStatusLevel}" Value="Yellow">
+                    <Setter Property="Foreground" Value="#A66A00" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LocalSnapshot.PatchStatusLevel}" Value="Red">
+                    <Setter Property="Foreground" Value="#9A1D1D" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SelectableValueTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource AppReadOnlyTextBoxStyle}" />
+
+        <Style x:Key="SelectablePatchStatusTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource SelectableValueTextBoxStyle}">
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="PatchStatusDotStyle"
+               TargetType="Border"
+               BasedOn="{StaticResource AppStatusDotStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LocalSnapshot.PatchStatusLevel}" Value="Green">
+                    <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LocalSnapshot.PatchStatusLevel}" Value="Yellow">
+                    <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding LocalSnapshot.PatchStatusLevel}" Value="Red">
+                    <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FreeDiskSpaceStatusTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource SelectableValueTextBoxStyle}">
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="FreeDiskSpaceStatusDotStyle"
+               TargetType="Border"
+               BasedOn="{StaticResource AppStatusDotStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding FreeDiskSpaceStatusLevel}" Value="Green">
+                    <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding FreeDiskSpaceStatusLevel}" Value="Yellow">
+                    <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding FreeDiskSpaceStatusLevel}" Value="Red">
+                    <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="UptimeStatusTextBoxStyle"
+               TargetType="TextBox"
+               BasedOn="{StaticResource SelectableValueTextBoxStyle}">
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="UptimeStatusDotStyle"
+               TargetType="Border"
+               BasedOn="{StaticResource AppStatusDotStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding UptimeStatusLevel}" Value="Green">
+                    <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding UptimeStatusLevel}" Value="Yellow">
+                    <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding UptimeStatusLevel}" Value="Red">
+                    <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="StatusDotStyle" TargetType="Border" BasedOn="{StaticResource AppStatusDotStyle}" />
+
+        <Style x:Key="StatusLevelDotStyle"
+               TargetType="Border"
+               BasedOn="{StaticResource AppStatusDotStyle}">
+            <Setter Property="Background" Value="#8A8A8A" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Green">
+                    <Setter Property="Background" Value="{StaticResource ShellSuccessBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Yellow">
+                    <Setter Property="Background" Value="{StaticResource ShellWarningBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource Self}}" Value="Red">
+                    <Setter Property="Background" Value="{StaticResource ShellDangerBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="DataGrid" BasedOn="{StaticResource AppDataGridStyle}">
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+        </Style>
+
+        <Style TargetType="GroupBox" BasedOn="{StaticResource AppGroupBoxStyle}" />
+        <Style x:Key="GroupLoadingOverlayStyle" TargetType="Border" BasedOn="{StaticResource AppLoadingOverlayStyle}" />
+    </UserControl.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                    Tag="&#xE72C;"
+                    Content="Refresh"
+                    Width="120"
+                    Command="{Binding RefreshCommand}" />
+        </StackPanel>
+
+        <TabControl Grid.Row="1"
+                    SelectedIndex="{Binding SelectedSectionIndex, Mode=TwoWay}">
+            <TabControl.Style>
+                <Style TargetType="TabControl">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TabControl}">
+                                <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="8">
+                                    <ContentPresenter ContentSource="SelectedContent" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Style>
+
+            <TabItem Header="Overview">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <GroupBox Header="Cloud Device" Grid.Row="0" Grid.Column="0" Margin="0,0,8,8" Padding="8"
+                                      Visibility="{Binding IsCloudDeviceVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Device" FontWeight="Bold" Visibility="{Binding ShowCloudDeviceName, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Device.DeviceName, TargetNullValue=Not found}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowCloudDeviceName, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Platform" FontWeight="Bold" Visibility="{Binding ShowCloudDevicePlatform, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Device.Platform, TargetNullValue=-}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowCloudDevicePlatform, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Compliance" FontWeight="Bold" Visibility="{Binding ShowCloudDeviceCompliance, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Device.ComplianceState, TargetNullValue=-}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowCloudDeviceCompliance, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Last Sync (Cloud)" FontWeight="Bold" Visibility="{Binding ShowCloudDeviceCloudLastSync, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Device.LastSync, TargetNullValue=-}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowCloudDeviceCloudLastSync, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Last Sync (MDM)" FontWeight="Bold" Visibility="{Binding ShowCloudDeviceMdmLastSync, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding LocalSnapshot.MdmLastSyncText, TargetNullValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowCloudDeviceMdmLastSync, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Last Sync (IME)" FontWeight="Bold" Visibility="{Binding ShowCloudDeviceImeLastSync, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding LocalSnapshot.ImeLastSyncText, TargetNullValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowCloudDeviceImeLastSync, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Intune Status" FontWeight="Bold" Visibility="{Binding ShowCloudDeviceIntuneStatus, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="6" Grid.Column="1" Visibility="{Binding ShowCloudDeviceIntuneStatus, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <StackPanel Orientation="Horizontal" ToolTip="{Binding EnrollmentUrlsDetailText}">
+                                                <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding EnrollmentUrlsColorHex}" />
+                                                <TextBox Text="{Binding EnrollmentUrlsStatusText}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                            </StackPanel>
+                                            <TextBlock Margin="18,2,0,0" Text="{Binding EnrollmentUrlsDetailText}" Foreground="#4A5A70" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Style="{StaticResource GroupLoadingOverlayStyle}"
+                                            Visibility="{Binding IsCloudDeviceLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="Loading cloud device..."
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="#4A5A70"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,8" />
+                                            <ProgressBar Width="160" Height="6" IsIndeterminate="True" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Header="Local System" Grid.Row="0" Grid.Column="1" Margin="8,0,0,8" Padding="8"
+                                      Visibility="{Binding IsLocalSystemVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Manufacturer" FontWeight="Bold" Visibility="{Binding ShowLocalSystemManufacturer, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding LocalSnapshot.ManufacturerText, TargetNullValue=Unknown, FallbackValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowLocalSystemManufacturer, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Model" FontWeight="Bold" Visibility="{Binding ShowLocalSystemModel, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding LocalSnapshot.ModelText, TargetNullValue=Unknown, FallbackValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowLocalSystemModel, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Serial Number" FontWeight="Bold" Visibility="{Binding ShowLocalSystemSerialNumber, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding LocalSnapshot.SerialNumberText, TargetNullValue=Unknown, FallbackValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowLocalSystemSerialNumber, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Windows Version" FontWeight="Bold" Visibility="{Binding ShowLocalSystemWindowsVersion, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding LocalSnapshot.WindowsVersionText, TargetNullValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowLocalSystemWindowsVersion, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Windows Build" FontWeight="Bold" Visibility="{Binding ShowLocalSystemWindowsBuild, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding LocalSnapshot.WindowsBuildText, TargetNullValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowLocalSystemWindowsBuild, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Update Ring" FontWeight="Bold" Visibility="{Binding ShowLocalSystemUpdateRing, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding LocalSnapshot.UpdateRingText, TargetNullValue=Unknown, FallbackValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowLocalSystemUpdateRing, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Patch Status" FontWeight="Bold" Visibility="{Binding ShowLocalSystemPatchStatus, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowLocalSystemPatchStatus, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource PatchStatusDotStyle}" />
+                                            <TextBox Text="{Binding LocalSnapshot.PatchStatusText, TargetNullValue=Patch status unavailable.}"
+                                                     Style="{StaticResource SelectablePatchStatusTextBoxStyle}" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Free Disk Space" FontWeight="Bold" Visibility="{Binding ShowLocalSystemFreeDiskSpace, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowLocalSystemFreeDiskSpace, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource FreeDiskSpaceStatusDotStyle}" />
+                                            <TextBox Text="{Binding LocalSnapshot.FreeDiskSpaceText, TargetNullValue=Unknown}"
+                                                     ToolTip="{Binding FreeDiskSpaceDetailText}"
+                                                     Style="{StaticResource FreeDiskSpaceStatusTextBoxStyle}" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Style="{StaticResource GroupLoadingOverlayStyle}"
+                                            Visibility="{Binding IsLocalSystemLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="Loading local system..."
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="#4A5A70"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,8" />
+                                            <ProgressBar Width="160" Height="6" IsIndeterminate="True" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Header="Platform Security" Grid.Row="1" Grid.Column="0" Margin="0,0,8,8" Padding="8"
+                                      Visibility="{Binding IsPlatformSecurityVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="BitLocker" FontWeight="Bold" Visibility="{Binding ShowPlatformSecurityBitLocker, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowPlatformSecurityBitLocker, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.PlatformSecurity.BitLockerStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.PlatformSecurity.BitLockerStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="BitLocker Detail" FontWeight="Bold" Visibility="{Binding ShowPlatformSecurityBitLockerDetail, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding LocalSnapshot.PlatformSecurity.BitLockerDetailText, TargetNullValue=BitLocker status is not available., FallbackValue=BitLocker status is not available.}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowPlatformSecurityBitLockerDetail, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="TPM" FontWeight="Bold" Visibility="{Binding ShowPlatformSecurityTpm, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowPlatformSecurityTpm, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.PlatformSecurity.TpmStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.PlatformSecurity.TpmStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="TPM Version" FontWeight="Bold" Visibility="{Binding ShowPlatformSecurityTpmVersion, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding LocalSnapshot.PlatformSecurity.TpmVersionText, TargetNullValue=Unknown, FallbackValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowPlatformSecurityTpmVersion, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="TPM Detail" FontWeight="Bold" Visibility="{Binding ShowPlatformSecurityTpmDetail, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding LocalSnapshot.PlatformSecurity.TpmDetailText, TargetNullValue=TPM status is not available., FallbackValue=TPM status is not available.}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowPlatformSecurityTpmDetail, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Secure Boot" FontWeight="Bold" Visibility="{Binding ShowPlatformSecuritySecureBoot, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowPlatformSecuritySecureBoot, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.PlatformSecurity.SecureBootStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.PlatformSecurity.SecureBootStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Credential Guard" FontWeight="Bold" Visibility="{Binding ShowPlatformSecurityCredentialGuard, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowPlatformSecurityCredentialGuard, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.PlatformSecurity.CredentialGuardStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.PlatformSecurity.CredentialGuardStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="VBS" FontWeight="Bold" Visibility="{Binding ShowPlatformSecurityVbs, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowPlatformSecurityVbs, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.PlatformSecurity.VbsStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.PlatformSecurity.VbsStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Memory Integrity" FontWeight="Bold" Visibility="{Binding ShowPlatformSecurityMemoryIntegrity, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowPlatformSecurityMemoryIntegrity, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.PlatformSecurity.MemoryIntegrityStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.PlatformSecurity.MemoryIntegrityStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Style="{StaticResource GroupLoadingOverlayStyle}"
+                                            Visibility="{Binding IsPlatformSecurityLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="Loading platform security..."
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="#4A5A70"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,8" />
+                                            <ProgressBar Width="160" Height="6" IsIndeterminate="True" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Header="System Runtime" Grid.Row="1" Grid.Column="1" Margin="8,0,0,8" Padding="8"
+                                      Visibility="{Binding IsSystemRuntimeVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Uptime" FontWeight="Bold" Visibility="{Binding ShowSystemRuntimeUptime, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowSystemRuntimeUptime, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource UptimeStatusDotStyle}" />
+                                            <TextBox Text="{Binding UptimeDisplayText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     ToolTip="{Binding UptimeDetailText}"
+                                                     Style="{StaticResource UptimeStatusTextBoxStyle}" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Last Reboot" FontWeight="Bold" Visibility="{Binding ShowSystemRuntimeLastReboot, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="1" Grid.Column="1"
+                                                 Text="{Binding LocalSnapshot.SystemRuntime.LastBootText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                 ToolTip="{Binding UptimeDetailText}"
+                                                 Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                 Visibility="{Binding ShowSystemRuntimeLastReboot, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Install Date" FontWeight="Bold" Visibility="{Binding ShowSystemRuntimeInstallDate, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding LocalSnapshot.SystemRuntime.InstallDateText, TargetNullValue=Unknown, FallbackValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowSystemRuntimeInstallDate, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Pending Reboot" FontWeight="Bold" Visibility="{Binding ShowSystemRuntimePendingReboot, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowSystemRuntimePendingReboot, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.SystemRuntime.PendingRebootStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.SystemRuntime.PendingRebootStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Pending Reboot Detail" FontWeight="Bold" Visibility="{Binding ShowSystemRuntimePendingRebootDetail, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding LocalSnapshot.SystemRuntime.PendingRebootDetailText, TargetNullValue=Pending reboot state is not available., FallbackValue=Pending reboot state is not available.}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowSystemRuntimePendingRebootDetail, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Windows Update Restart" FontWeight="Bold" Visibility="{Binding ShowSystemRuntimeWindowsUpdateRestart, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowSystemRuntimeWindowsUpdateRestart, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.SystemRuntime.WindowsUpdateScheduledRestartStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.SystemRuntime.WindowsUpdateScheduledRestartStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold"
+                                                     ToolTip="{Binding LocalSnapshot.SystemRuntime.MecmScheduledRestartTimeText, TargetNullValue=MECM scheduled restart state is not available., FallbackValue=MECM scheduled restart state is not available.}" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Scheduled Restart Time" FontWeight="Bold" Visibility="{Binding ShowSystemRuntimeScheduledRestartTime, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="6" Grid.Column="1"
+                                                 Text="{Binding LocalSnapshot.SystemRuntime.WindowsUpdateScheduledRestartTimeText, TargetNullValue=Windows Update scheduled restart state is not available., FallbackValue=Windows Update scheduled restart state is not available.}"
+                                                 Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                 Visibility="{Binding ShowSystemRuntimeScheduledRestartTime, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Session Lock" FontWeight="Bold" Visibility="{Binding ShowSystemRuntimeSessionLock, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowSystemRuntimeSessionLock, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.SystemRuntime.SessionLockStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.SystemRuntime.SessionLockStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Locked Since" FontWeight="Bold" Visibility="{Binding ShowSystemRuntimeLockedSince, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="8" Grid.Column="1"
+                                                 Text="{Binding LocalSnapshot.SystemRuntime.SessionLockedSinceText, TargetNullValue=Session lock state is not available., FallbackValue=Session lock state is not available.}"
+                                                 Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                 Visibility="{Binding ShowSystemRuntimeLockedSince, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                    </Grid>
+
+                                    <Border Style="{StaticResource GroupLoadingOverlayStyle}"
+                                            Visibility="{Binding IsSystemRuntimeLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="Loading system runtime..."
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="#4A5A70"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,8" />
+                                            <ProgressBar Width="160" Height="6" IsIndeterminate="True" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Header="Network" Grid.Row="2" Grid.Column="0" Margin="0,0,8,8" Padding="8"
+                                      Visibility="{Binding IsNetworkVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Connection Type" FontWeight="Bold" Visibility="{Binding ShowNetworkConnectionType, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding LocalSnapshot.NetworkConnectivity.PrimaryConnectionText, TargetNullValue=Unknown, FallbackValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowNetworkConnectionType, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Active Adapter" FontWeight="Bold" Visibility="{Binding ShowNetworkActiveAdapter, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding LocalSnapshot.NetworkConnectivity.PrimaryAdapterText, TargetNullValue=Unknown, FallbackValue=Unknown}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowNetworkActiveAdapter, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Wi-Fi SSID" FontWeight="Bold" Visibility="{Binding ShowNetworkWifiSsid, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding LocalSnapshot.NetworkConnectivity.WiFiSsidText, TargetNullValue=Not connected, FallbackValue=Not connected}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowNetworkWifiSsid, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="VPN" FontWeight="Bold" Visibility="{Binding ShowNetworkVpn, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowNetworkVpn, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.NetworkConnectivity.VpnStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.NetworkConnectivity.VpnStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="VPN Provider" FontWeight="Bold" Visibility="{Binding ShowNetworkVpnProvider, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding LocalSnapshot.NetworkConnectivity.VpnProviderText, TargetNullValue=-, FallbackValue=-}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowNetworkVpnProvider, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Port Authentication" FontWeight="Bold" Visibility="{Binding ShowNetworkPortAuthenticationSummary, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal"
+                                                    ToolTip="{Binding LocalSnapshot.NetworkConnectivity.PortAuthenticationDetailText, TargetNullValue=Port authentication status is not available., FallbackValue=Port authentication status is not available.}"
+                                                    Visibility="{Binding ShowNetworkPortAuthenticationSummary, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Style="{StaticResource StatusDotStyle}"
+                                                    Tag="{Binding LocalSnapshot.NetworkConnectivity.PortAuthenticationStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}" />
+                                            <TextBox Text="{Binding LocalSnapshot.NetworkConnectivity.PortAuthenticationStatusText, TargetNullValue=Unknown, FallbackValue=Unknown}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Style="{StaticResource GroupLoadingOverlayStyle}"
+                                            Visibility="{Binding IsNetworkLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="Loading network..."
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="#4A5A70"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,8" />
+                                            <ProgressBar Width="160" Height="6" IsIndeterminate="True" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Header="Client Health Check" Grid.Row="2" Grid.Column="1" Margin="8,0,0,8" Padding="8"
+                                      Visibility="{Binding IsClientHealthVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Overall Health" FontWeight="Bold" Visibility="{Binding ShowClientHealthOverall, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding ShowClientHealthOverall, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding ClientHealthColorHex}" />
+                                            <TextBox Text="{Binding ClientHealthStatusText}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Summary" FontWeight="Bold" Visibility="{Binding ShowClientHealthSummary, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ClientHealthSummaryText}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowClientHealthSummary, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Defender" FontWeight="Bold" Visibility="{Binding ShowDefenderHealth, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" ToolTip="{Binding DefenderHealthDetailText}" Visibility="{Binding ShowDefenderHealth, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding DefenderHealthColorHex}" />
+                                            <TextBox Text="{Binding DefenderHealthStatusText}"
+                                                     Style="{StaticResource SelectableValueTextBoxStyle}"
+                                                     FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Defender Detail" FontWeight="Bold" Visibility="{Binding ShowDefenderHealthDetail, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding DefenderHealthSummaryText}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowDefenderHealthDetail, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Definition Age" FontWeight="Bold" Visibility="{Binding ShowDefenderDefinitionAge, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding DefenderDefinitionAgeText}" Style="{StaticResource SelectableValueTextBoxStyle}" Visibility="{Binding ShowDefenderDefinitionAge, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Entra Joined" FontWeight="Bold" Visibility="{Binding ShowEntraJoinHealth, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" ToolTip="{Binding EntraJoinDetailText}" Visibility="{Binding ShowEntraJoinHealth, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding EntraJoinColorHex}" />
+                                            <TextBox Text="{Binding EntraJoinStatusText}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="AD Joined" FontWeight="Bold" Visibility="{Binding ShowAdJoinHealth, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" ToolTip="{Binding AdJoinDetailText}" Visibility="{Binding ShowAdJoinHealth, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding AdJoinColorHex}" />
+                                            <TextBox Text="{Binding AdJoinStatusText}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Intune Enrolled" FontWeight="Bold" Visibility="{Binding ShowIntuneEnrollmentHealth, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" ToolTip="{Binding IntuneEnrollmentDetailText}" Visibility="{Binding ShowIntuneEnrollmentHealth, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Border Width="12" Height="12" CornerRadius="6" Margin="0,3,6,0" Background="{Binding IntuneEnrollmentColorHex}" />
+                                            <TextBox Text="{Binding IntuneEnrollmentStatusText}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Style="{StaticResource GroupLoadingOverlayStyle}"
+                                            Visibility="{Binding IsClientHealthLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="Loading health checks..."
+                                                       HorizontalAlignment="Center"
+                                                       Foreground="#4A5A70"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,8" />
+                                            <ProgressBar Width="160" Height="6" IsIndeterminate="True" />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </GroupBox>
+                        </Grid>
+
+                        <TextBox Margin="0,2,0,0" Text="{Binding Status}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Delivery Optimization"
+                     Visibility="{Binding IsDeliveryOptimizationVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="Time range" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <ComboBox Width="190"
+                                      ItemsSource="{Binding DeliveryOptimizationRangeOptions}"
+                                      SelectedItem="{Binding SelectedDeliveryOptimizationRange, Mode=TwoWay}"
+                                      IsEnabled="{Binding IsDeliveryOptimizationRangeFilterEnabled}" />
+                            <TextBlock Margin="12,2,0,0"
+                                       Text="{Binding DeliveryOptimizationRangeHint}"
+                                       Foreground="#4A5A70"
+                                       VerticalAlignment="Center"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,8"
+                                    Visibility="{Binding ShowDeliveryOptimizationSummary, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <TextBlock Text="{Binding DeliveryOptimizationSummaryText}" FontWeight="SemiBold" />
+                            <TextBlock Margin="0,3,0,0"
+                                       Text="{Binding DeliveryOptimizationWindowText, StringFormat='Data window: {0}'}"
+                                       Foreground="#4A5A70" />
+                        </StackPanel>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <GroupBox Grid.ColumnSpan="2" Header="Active Jobs" Margin="0,0,0,8" Padding="8"
+                                      Visibility="{Binding ShowDeliveryOptimizationActiveJobs, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DeliveryOptimizationActiveJobsSummaryText}"
+                                               Margin="0,0,0,6"
+                                               Foreground="#4A5A70"
+                                               TextWrapping="Wrap" />
+                                    <DataGrid ItemsSource="{Binding DeliveryOptimizationActiveJobs}"
+                                              AutoGenerateColumns="False"
+                                              IsReadOnly="True"
+                                              Height="210">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Content" Binding="{Binding Content}" Width="*" />
+                                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="130" />
+                                            <DataGridTextColumn Header="Size" Binding="{Binding FileSizeText}" Width="100" />
+                                            <DataGridTextColumn Header="Downloaded" Binding="{Binding DownloadedText}" Width="110" />
+                                            <DataGridTextColumn Header="Progress" Binding="{Binding ProgressText}" Width="90" />
+                                            <DataGridTextColumn Header="Speed" Binding="{Binding DownloadRateText}" Width="100" />
+                                            <DataGridTextColumn Header="Details" Binding="{Binding Details}" Width="240" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Grid.Row="1" Header="Current Perf Snapshot" Margin="0,0,8,8" Padding="8"
+                                      Visibility="{Binding ShowDeliveryOptimizationCurrentMetrics, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DeliveryOptimizationCurrentMetricsSummaryText}"
+                                               Margin="0,0,0,6"
+                                               Foreground="#4A5A70"
+                                               TextWrapping="Wrap" />
+                                    <DataGrid ItemsSource="{Binding DeliveryOptimizationCurrentMetrics}"
+                                              AutoGenerateColumns="False"
+                                              IsReadOnly="True"
+                                              Height="210">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Metric" Binding="{Binding Name}" Width="220" />
+                                            <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Grid.Row="1" Grid.Column="1" Header="Month To Date Perf Snapshot" Margin="8,0,0,8" Padding="8"
+                                      Visibility="{Binding ShowDeliveryOptimizationMonthlyMetrics, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DeliveryOptimizationMonthlyMetricsSummaryText}"
+                                               Margin="0,0,0,6"
+                                               Foreground="#4A5A70"
+                                               TextWrapping="Wrap" />
+                                    <DataGrid ItemsSource="{Binding DeliveryOptimizationMonthlyMetrics}"
+                                              AutoGenerateColumns="False"
+                                              IsReadOnly="True"
+                                              Height="210">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Metric" Binding="{Binding Name}" Width="220" />
+                                            <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Grid.Row="2" Header="Peer Snapshot" Margin="0,0,8,8" Padding="8"
+                                      Visibility="{Binding ShowDeliveryOptimizationPeerSnapshot, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DeliveryOptimizationPeerSummaryText}"
+                                               Margin="0,0,0,6"
+                                               Foreground="#4A5A70"
+                                               TextWrapping="Wrap" />
+                                    <DataGrid ItemsSource="{Binding DeliveryOptimizationPeerStatuses}"
+                                              AutoGenerateColumns="False"
+                                              IsReadOnly="True"
+                                              Height="210">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Content" Binding="{Binding Content}" Width="*" />
+                                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="130" />
+                                            <DataGridTextColumn Header="Candidates" Binding="{Binding CandidateCount}" Width="80" />
+                                            <DataGridTextColumn Header="Connected" Binding="{Binding ConnectedPeerCount}" Width="80" />
+                                            <DataGridTextColumn Header="Peer MB" Binding="{Binding BytesFromPeersText}" Width="100" />
+                                            <DataGridTextColumn Header="HTTP MB" Binding="{Binding BytesFromHttpText}" Width="100" />
+                                            <DataGridTextColumn Header="Details" Binding="{Binding Details}" Width="220" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Grid.Row="2" Grid.Column="1" Header="Configuration" Margin="8,0,0,8" Padding="8"
+                                      Visibility="{Binding ShowDeliveryOptimizationConfiguration, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding DeliveryOptimizationConfigurationSummaryText}"
+                                               Margin="0,0,0,6"
+                                               Foreground="#4A5A70"
+                                               TextWrapping="Wrap" />
+                                    <DataGrid ItemsSource="{Binding DeliveryOptimizationConfigurationRows}"
+                                              AutoGenerateColumns="False"
+                                              IsReadOnly="True"
+                                              Height="210">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Setting" Binding="{Binding Name}" Width="220" />
+                                            <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </GroupBox>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="3*" />
+                            </Grid.ColumnDefinitions>
+
+                            <GroupBox Header="Source Distribution" Margin="0,0,8,8" Padding="8"
+                                      Visibility="{Binding ShowDeliveryOptimizationSourceDistribution, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <DataGrid ItemsSource="{Binding DeliveryOptimizationSourceRows}"
+                                          AutoGenerateColumns="False"
+                                          IsReadOnly="True"
+                                          Height="260">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="*" />
+                                        <DataGridTextColumn Header="Bytes" Binding="{Binding BytesText}" Width="120" />
+                                        <DataGridTextColumn Header="Transfers" Binding="{Binding TransferCount}" Width="80" />
+                                        <DataGridTemplateColumn Header="Share" Width="190">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="56" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <ProgressBar Grid.Column="0"
+                                                                     Height="14"
+                                                                     Margin="0,2,6,2"
+                                                                     Minimum="0"
+                                                                     Maximum="100"
+                                                                     Value="{Binding SharePercent}" />
+                                                        <TextBlock Grid.Column="1"
+                                                                   VerticalAlignment="Center"
+                                                                   HorizontalAlignment="Right"
+                                                                   Text="{Binding ShareText}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </GroupBox>
+
+                            <GroupBox Grid.Column="1" Header="Transfer Timeline" Margin="8,0,0,8" Padding="8"
+                                      Visibility="{Binding ShowDeliveryOptimizationTransferTimeline, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <DataGrid ItemsSource="{Binding DeliveryOptimizationTransfers}"
+                                          AutoGenerateColumns="False"
+                                          IsReadOnly="True"
+                                          Height="260">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Timestamp (UTC)"
+                                                            Binding="{Binding TimestampUtc, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}"
+                                                            Width="170" />
+                                        <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="120" />
+                                        <DataGridTextColumn Header="MB" Binding="{Binding BytesText}" Width="110" />
+                                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </GroupBox>
+                        </Grid>
+
+                        <TextBlock Margin="0,4,0,0"
+                                   Text="{Binding DeliveryOptimizationNotesText, StringFormat='Notes: {0}'}"
+                                   TextWrapping="Wrap"
+                                   Visibility="{Binding ShowDeliveryOptimizationNotes, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Port Authentication"
+                     Visibility="{Binding IsPortAuthenticationVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <WrapPanel Margin="0,0,0,8"
+                                   Visibility="{Binding ShowPortAuthenticationRemediation, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                                    Tag="&#xE72C;"
+                                    Content="Refresh"
+                                    Margin="0,0,8,8"
+                                    MinWidth="118"
+                                    Command="{Binding RefreshPortAuthenticationCommand}"
+                                    IsEnabled="{Binding CanRefreshPortAuthentication}" />
+                            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                                    Tag="&#xE117;"
+                                    Content="Restart 802.1X Services"
+                                    Margin="0,0,8,8"
+                                    MinWidth="180"
+                                    Command="{Binding RestartPortAuthenticationServicesCommand}"
+                                    IsEnabled="{Binding CanRestartPortAuthenticationServices}" />
+                            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                                    Tag="&#xE7AD;"
+                                    Content="Restart Adapter"
+                                    Margin="0,0,8,8"
+                                    MinWidth="135"
+                                    Command="{Binding RestartPortAuthenticationAdapterCommand}"
+                                    IsEnabled="{Binding CanRestartPortAuthenticationAdapter}" />
+                            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                                    Tag="&#xE7E8;"
+                                    Content="Enable Tracing"
+                                    Margin="0,0,8,8"
+                                    MinWidth="130"
+                                    Command="{Binding EnablePortAuthenticationTracingCommand}"
+                                    IsEnabled="{Binding CanEnablePortAuthenticationTracing}" />
+                            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                                    Tag="&#xE711;"
+                                    Content="Disable Tracing"
+                                    Margin="0,0,8,8"
+                                    MinWidth="130"
+                                    Command="{Binding DisablePortAuthenticationTracingCommand}"
+                                    IsEnabled="{Binding CanDisablePortAuthenticationTracing}" />
+                            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                                    Tag="&#xE8D4;"
+                                    Content="Enable Autoconfig"
+                                    Margin="0,0,8,8"
+                                    MinWidth="150"
+                                    Command="{Binding EnablePortAuthenticationAutoconfigCommand}"
+                                    IsEnabled="{Binding CanEnablePortAuthenticationAutoconfig}" />
+                            <ComboBox Width="240"
+                                      Margin="0,0,8,8"
+                                      ItemsSource="{Binding PortAuthenticationSnapshot.Profiles}"
+                                      SelectedItem="{Binding SelectedPortAuthenticationProfile, Mode=TwoWay}"
+                                      DisplayMemberPath="Name"
+                                      IsEnabled="{Binding HasPortAuthenticationProfiles}" />
+                            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                                    Tag="&#xE72D;"
+                                    Content="Reapply Profile"
+                                    Margin="0,0,8,8"
+                                    MinWidth="140"
+                                    Command="{Binding ReapplyPortAuthenticationProfileCommand}"
+                                    IsEnabled="{Binding CanReapplyPortAuthenticationProfile}" />
+                            <CheckBox Margin="0,6,0,0"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding ConfirmPortAuthenticationDisruptiveActions, Mode=TwoWay}"
+                                      Content="Confirm disruptive actions (adapter restart/profile reapply)." />
+                        </WrapPanel>
+
+                        <StackPanel Margin="0,0,0,8">
+                            <TextBlock Text="{Binding PortAuthenticationSectionStatusText}"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Margin="0,3,0,0"
+                                       Text="{Binding PortAuthenticationActionStatusText}"
+                                       Foreground="#4A5A70"
+                                       TextWrapping="Wrap" />
+                            <ProgressBar Margin="0,8,0,0"
+                                         Height="6"
+                                         IsIndeterminate="True"
+                                         Visibility="{Binding IsPortAuthenticationLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        </StackPanel>
+
+                        <GroupBox Header="Summary"
+                                  Margin="0,0,0,8"
+                                  Padding="8"
+                                  Visibility="{Binding ShowPortAuthenticationSummary, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Overall Status" FontWeight="Bold" />
+                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                                    <Border Style="{StaticResource StatusLevelDotStyle}"
+                                            Tag="{Binding PortAuthenticationOverallStatusLevel}" />
+                                    <TextBox Text="{Binding PortAuthenticationOverallStatusText, Mode=OneWay}"
+                                             Style="{StaticResource SelectableValueTextBoxStyle}"
+                                             FontWeight="SemiBold" />
+                                </StackPanel>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Applicability" FontWeight="Bold" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding PortAuthenticationApplicabilityText, Mode=OneWay}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="FQDN" FontWeight="Bold" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding PortAuthenticationFqdnText, Mode=OneWay}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Active Interface" FontWeight="Bold" />
+                                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding PortAuthenticationActiveInterfaceName, Mode=OneWay}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Adapter Detail" FontWeight="Bold" />
+                                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding PortAuthenticationActiveInterfaceDescription, Mode=OneWay}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="Authentication State" FontWeight="Bold" />
+                                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding PortAuthenticationAuthenticationStateText, Mode=OneWay}" Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Tracing / Last Success" FontWeight="Bold" />
+                                <StackPanel Grid.Row="6" Grid.Column="1">
+                                    <TextBox Text="{Binding PortAuthenticationTracingModeText, Mode=OneWay, StringFormat='Tracing: {0}'}"
+                                             Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                    <TextBox Margin="0,4,0,0"
+                                             Text="{Binding PortAuthenticationLastSuccessfulAuthenticationText, Mode=OneWay}"
+                                             Style="{StaticResource SelectableValueTextBoxStyle}" />
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+
+                        <TextBlock Margin="0,0,0,8"
+                                   Text="{Binding PortAuthenticationOverallDetailText}"
+                                   Foreground="#4A5A70"
+                                   TextWrapping="Wrap"
+                                   Visibility="{Binding ShowPortAuthenticationSummary, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                        <GroupBox Header="Checks"
+                                  Margin="0,0,0,8"
+                                  Padding="8"
+                                  Visibility="{Binding ShowPortAuthenticationChecks, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <DataGrid ItemsSource="{Binding PortAuthenticationSnapshot.Checks}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      Height="220">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="" Width="44">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource StatusLevelDotStyle}"
+                                                        Tag="{Binding StatusLevel}"
+                                                        HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Check" Binding="{Binding Name}" Width="180" />
+                                    <DataGridTextColumn Header="Status" Binding="{Binding StatusText}" Width="140" />
+                                    <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+
+                        <GroupBox Header="Profiles"
+                                  Margin="0,0,0,8"
+                                  Padding="8"
+                                  Visibility="{Binding ShowPortAuthenticationProfiles, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <DataGrid ItemsSource="{Binding PortAuthenticationSnapshot.Profiles}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      Height="220">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="" Width="44">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource StatusLevelDotStyle}"
+                                                        Tag="{Binding StatusLevel}"
+                                                        HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Profile" Binding="{Binding Name}" Width="220" />
+                                    <DataGridTextColumn Header="Interface" Binding="{Binding InterfaceName}" Width="160" />
+                                    <DataGridTextColumn Header="AuthMode" Binding="{Binding AuthMode}" Width="120" />
+                                    <DataGridTextColumn Header="SSO" Binding="{Binding SsoMode}" Width="120" />
+                                    <DataGridTextColumn Header="OneX Enabled" Binding="{Binding OneXEnabledText}" Width="110" />
+                                    <DataGridTextColumn Header="OneX Enforced" Binding="{Binding OneXEnforcedText}" Width="110" />
+                                    <DataGridTextColumn Header="EAP" Binding="{Binding EapType}" Width="110" />
+                                    <DataGridTextColumn Header="Parse Status" Binding="{Binding ParseStatusText}" Width="160" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+
+                        <GroupBox Header="Certificates"
+                                  Margin="0,0,0,8"
+                                  Padding="8"
+                                  Visibility="{Binding ShowPortAuthenticationCertificates, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <DataGrid ItemsSource="{Binding PortAuthenticationSnapshot.Certificates}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      Height="240">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="" Width="44">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource StatusLevelDotStyle}"
+                                                        Tag="{Binding StatusLevel}"
+                                                        HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="240" />
+                                    <DataGridTextColumn Header="SAN DNS" Binding="{Binding SanDns}" Width="200" />
+                                    <DataGridTextColumn Header="FQDN Match" Binding="{Binding FqdnMatchText}" Width="95" />
+                                    <DataGridTextColumn Header="Private Key" Binding="{Binding HasPrivateKeyText}" Width="90" />
+                                    <DataGridTextColumn Header="Validity" Binding="{Binding ValidityText}" Width="150" />
+                                    <DataGridTextColumn Header="Chain Status" Binding="{Binding ChainStatusText}" Width="180" />
+                                    <DataGridTextColumn Header="Issuer" Binding="{Binding Issuer}" Width="220" />
+                                    <DataGridTextColumn Header="Store" Binding="{Binding StoreName}" Width="130" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+
+                        <GroupBox Header="Events"
+                                  Margin="0,0,0,8"
+                                  Padding="8"
+                                  Visibility="{Binding ShowPortAuthenticationEvents, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <DataGrid ItemsSource="{Binding PortAuthenticationSnapshot.Events}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      Height="280">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="" Width="44">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource StatusLevelDotStyle}"
+                                                        Tag="{Binding StatusLevel}"
+                                                        HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Time (UTC)"
+                                                        Binding="{Binding TimeCreated, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}"
+                                                        Width="170" />
+                                    <DataGridTextColumn Header="Log" Binding="{Binding LogName}" Width="240" />
+                                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="70" />
+                                    <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="90" />
+                                    <DataGridTextColumn Header="Summary" Binding="{Binding Summary}" Width="260" />
+                                    <DataGridTextColumn Header="Recommended Action" Binding="{Binding RecommendedAction}" Width="260" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

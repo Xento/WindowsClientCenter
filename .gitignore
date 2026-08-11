@@ -1,0 +1,30 @@
+# Build outputs
+bin/
+obj/
+out/
+artifacts/
+
+# User files
+*.user
+*.suo
+*.cache
+.vs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temp
+/tmp/
+/Visual Studio 18/
+/store_*.db
+
+# Local runtime overrides
+src/Host.Wpf/appsettings.Local.json
+gpresult.xml
+gpresult.html
+IntuneRegistry.reg
+PolicyManager.reg

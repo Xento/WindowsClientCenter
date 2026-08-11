@@ -1,0 +1,9 @@
+{
+  "id": "device-profiles-view",
+  "displayName": "Device Profiles",
+  "version": "1.0.0",
+  "entryPoint": "WindowsClientCenter.Plugins.DeviceActions.DeviceProfilesViewPlugin",
+  "capability": "View",
+  "menuPath": "Device/Profiles",
+  "minHostVersion": "1.0.0"
+}

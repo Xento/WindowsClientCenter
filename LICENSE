@@ -1,0 +1,78 @@
+# Windows Client Center Source-Available License
+
+Copyright (c) 2026 Markus M.
+
+Except for the Third-Party Components identified below, Windows Client Center is
+licensed under the MIT License subject to the Commons Clause License Condition
+v1.0. The Commons Clause takes precedence wherever it conflicts with the MIT
+License.
+
+## Commons Clause License Condition v1.0
+
+The Software is provided to you by the Licensor under the License, as defined
+below, subject to the following condition.
+
+Without limiting other conditions in the License, the grant of rights under the
+License will not include, and the License does not grant to you, the right to
+Sell the Software.
+
+For purposes of the foregoing, "Sell" means practicing any or all of the rights
+granted to you under the License to provide to third parties, for a fee or other
+consideration (including without limitation fees for hosting or consulting/
+support services related to the Software), a product or service whose value
+derives, entirely or substantially, from the functionality of the Software. Any
+license notice or attribution required by the License must also include this
+Commons Clause License Condition notice.
+
+Software: Windows Client Center, excluding the Third-Party Components identified
+below
+
+License: MIT License
+
+Licensor: Markus M.; each contributor is the licensor of that contributor's
+contribution
+
+Official condition text: https://commonsclause.com/
+
+## MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## Third-Party Components
+
+Third-party components and materials remain under their own license terms. Those
+terms take precedence for the corresponding files and are not restricted by the
+Commons Clause above.
+
+- `src/SccmCliCtr.Automation/` is licensed under the GNU Lesser General Public
+  License version 3 or later. The compiled `sccmclictr.automation.dll` remains
+  under the same license. See `src/SccmCliCtr.Automation/LICENSE.md`,
+  `src/SccmCliCtr.Automation/MODIFICATIONS.md`, and `LICENSES/`.
+- `src/Plugins.MecmAgent/UI/MecmAgentView.xaml` is licensed under the Microsoft
+  Public License because its MECM application and update presentation was
+  adapted using the SCCM Client Center UI as a reference.
+- The WinGet-derived rows identified in
+  `docs/attribution/error-catalog.md` remain under the upstream MIT License.
+- NuGet packages, the .NET runtime, WPF runtime, PowerShell components, and
+  other distributed dependencies remain under their respective licenses.
+
+The component inventory, exact upstream revisions, copyright notices, license
+copies, and corresponding-source information are in
+`THIRD-PARTY-NOTICES.md`, `LICENSES/`, `SOURCE-CODE.md`, and
+`docs/attribution/`. All of those files are part of every binary release.

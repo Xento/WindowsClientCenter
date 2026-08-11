@@ -1,0 +1,1016 @@
+<UserControl x:Class="WindowsClientCenter.Plugins.IntuneAgent.UI.IntuneAgentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <Style TargetType="Button" BasedOn="{StaticResource AppCommandButtonStyle}">
+            <Setter Property="MinWidth" Value="140" />
+        </Style>
+        <Style TargetType="CheckBox" BasedOn="{StaticResource AppCommandCheckBoxStyle}" />
+        <Style TargetType="ComboBox" BasedOn="{StaticResource AppCommandComboBoxStyle}" />
+        <Style TargetType="GroupBox" BasedOn="{StaticResource AppGroupBoxStyle}" />
+        <Style TargetType="DataGrid" BasedOn="{StaticResource AppDataGridStyle}">
+            <Setter Property="SelectionMode" Value="Extended" />
+            <Setter Property="SelectionUnit" Value="CellOrRowHeader" />
+            <Setter Property="ClipboardCopyMode" Value="IncludeHeader" />
+        </Style>
+        <Style x:Key="SectionLoadingOverlayStyle" TargetType="Border" BasedOn="{StaticResource AppLoadingOverlayStyle}" />
+
+        <Style x:Key="ImeTimelineRowStyle" TargetType="DataGridRow">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsRelatedHighlight}" Value="True">
+                    <Setter Property="Background" Value="#FFF4CC" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ResolvedCodeTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#0B5CAD" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource AppShellOuterBorderStyle}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Style="{StaticResource AppShellHeaderBorderStyle}">
+                <DockPanel LastChildFill="False">
+                    <StackPanel DockPanel.Dock="Left">
+                        <TextBlock Text="Intune Agent" Style="{StaticResource AppShellHeaderTitleTextStyle}" />
+                        <TextBlock Text="Local diagnostics and separated Intune cloud actions." Style="{StaticResource AppShellHeaderSubtitleTextStyle}" />
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding CurrentHost, StringFormat=Target host: {0}}" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding AuthenticationSummary}" Style="{StaticResource AppShellHeaderSubtitleTextStyle}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Row="1" Style="{StaticResource AppShellCommandBarBorderStyle}">
+                <DockPanel LastChildFill="True">
+                    <Border DockPanel.Dock="Right"
+                            Margin="8,0,0,0"
+                            Padding="8,3"
+                            CornerRadius="11"
+                            BorderBrush="#A9C3E4"
+                            BorderThickness="1"
+                            Background="#F4F8FF">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLongRunningLocalAction}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <ProgressBar Width="34"
+                                         Height="4"
+                                         Margin="0,0,6,0"
+                                         VerticalAlignment="Center"
+                                         IsIndeterminate="True" />
+                            <TextBlock Text="{Binding LongRunningLocalActionLabel}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="#1D4876" />
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Text="{Binding OverallStatus}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                </DockPanel>
+            </Border>
+
+            <TabControl Grid.Row="2" Margin="8" SelectedIndex="{Binding SelectedSectionIndex, Mode=TwoWay}">
+                <TabControl.Style>
+                    <Style TargetType="TabControl">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type TabControl}">
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Padding="8">
+                                        <ContentPresenter ContentSource="SelectedContent" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Style>
+
+                <TabItem Header="Overview">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <GroupBox Header="Overview">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="Host" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CurrentHost}" />
+                                    <TextBlock Grid.Row="1" Text="Registration summary" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Snapshot.RegistrationSummary, TargetNullValue=Unknown}" TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="2" Text="Last local sync" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Snapshot.LastSyncText, TargetNullValue=Unknown}" />
+                                    <TextBlock Grid.Row="3" Text="Enrollment" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding EnrollmentStatusText}" TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="4" Text="Enrollment URLs" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding EnrollmentStatus.EnrollmentUrls.Summary, TargetNullValue=No enrollment URL check loaded.}" TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="5" Text="Cloud match" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding CloudStatus}" TextWrapping="Wrap" />
+                                </Grid>
+                            </GroupBox>
+                            <GroupBox Header="Highlights">
+                                <ItemsControl ItemsSource="{Binding Snapshot.DsregHighlights}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,0,0,4" Text="{Binding}" TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                            <Button Style="{StaticResource AppIconTextButtonStyle}"
+                                    Tag="&#xE72C;"
+                                    Content="Refresh Overview"
+                                    Command="{Binding RefreshOverviewCommand}"
+                                    HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <TabItem Header="Local Diagnostics">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE72C;" Content="Refresh Diagnostics" Command="{Binding RefreshDiagnosticsCommand}" />
+                                <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE8A5;" Content="Export Snapshot" Command="{Binding ExportSnapshotCommand}" />
+                                <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE8A5;" Content="Export MDM Bundle" Command="{Binding ExportMdmDiagnosticsCommand}" />
+                            </StackPanel>
+                            <TextBlock Margin="0,0,0,8" Text="{Binding DiagnosticsStatus}" TextWrapping="Wrap" />
+                            <GroupBox Header="Service Values">
+                                <DataGrid ItemsSource="{Binding Snapshot.ServiceValues}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="220" />
+                                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </GroupBox>
+                            <GroupBox Header="Enrollment Artifacts">
+                                <DataGrid ItemsSource="{Binding Snapshot.EnrollmentArtifacts}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Type" Binding="{Binding ArtifactType}" Width="120" />
+                                        <DataGridTextColumn Header="Enrollment ID" Binding="{Binding EnrollmentId}" Width="220" />
+                                        <DataGridTextColumn Header="Path" Binding="{Binding ArtifactPath}" Width="*" />
+                                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="260" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </GroupBox>
+                            <GroupBox Header="EnterpriseMgmt Tasks">
+                                <ItemsControl ItemsSource="{Binding Snapshot.EnterpriseMgmtTasks}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,0,0,4" Text="{Binding}" TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                            <GroupBox Header="Certificates">
+                                <ItemsControl ItemsSource="{Binding Snapshot.CertificateSummaries}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,0,0,4" Text="{Binding}" TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                            <GroupBox Header="dsregcmd Auswertung">
+                                <ItemsControl ItemsSource="{Binding Snapshot.DsregHighlights}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,0,0,4" Text="{Binding}" TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                            <GroupBox Header="dsregcmd /status">
+                                <TextBox Text="{Binding Snapshot.DsregStatusText}" FontFamily="Consolas" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" MinHeight="260" />
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <TabItem Header="Enrollment">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE8EF;" Content="Run Enrollment Check" Command="{Binding RunEnrollmentCheckCommand}" />
+                                <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}" Tag="&#xE895;" Content="Trigger Sync" Command="{Binding TriggerSyncCommand}" />
+                                <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE7C3;" Content="Preview Re-enroll" Command="{Binding PreviewReenrollCommand}" />
+                            </StackPanel>
+                            <TextBlock Margin="0,0,0,8" Text="{Binding EnrollmentStatusText}" TextWrapping="Wrap" />
+                            <GroupBox Header="Checks">
+                                <ItemsControl ItemsSource="{Binding EnrollmentStatus.Checks}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,0,0,4" Text="{Binding}" TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                            <GroupBox Header="Warnings">
+                                <ItemsControl ItemsSource="{Binding EnrollmentStatus.Warnings}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,0,0,4" Foreground="#9A1D1D" Text="{Binding}" TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </GroupBox>
+                            <GroupBox Header="Enrollment URLs">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding EnrollmentStatus.EnrollmentUrls.Summary, TargetNullValue=No enrollment URL check loaded.}" TextWrapping="Wrap" />
+                                    <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding EnrollmentStatus.EnrollmentUrls.Warnings}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Margin="0,0,0,4" Foreground="#9A1D1D" Text="{Binding}" TextWrapping="Wrap" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Grid Margin="0,8,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="180" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="MdmEnrollmentUrl" FontWeight="Bold" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding EnrollmentStatus.EnrollmentUrls.EnrollmentUrl, TargetNullValue=-}" TextWrapping="Wrap" />
+                                        <TextBlock Grid.Row="1" Text="MdmTermsOfUseUrl" FontWeight="Bold" />
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding EnrollmentStatus.EnrollmentUrls.TermsOfUseUrl, TargetNullValue=-}" TextWrapping="Wrap" />
+                                        <TextBlock Grid.Row="2" Text="MdmComplianceUrl" FontWeight="Bold" />
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding EnrollmentStatus.EnrollmentUrls.ComplianceUrl, TargetNullValue=-}" TextWrapping="Wrap" />
+                                    </Grid>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Header="Re-enroll Preview">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding ReenrollPreview.Summary, TargetNullValue=Generate a preview first.}" TextWrapping="Wrap" />
+                                    <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding ReenrollPreview.Blockers}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Margin="0,0,0,4" Foreground="#9A1D1D" Text="{Binding}" TextWrapping="Wrap" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <DataGrid Margin="0,8,0,8" ItemsSource="{Binding ReenrollPreview.ArtifactsToRemove}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Type" Binding="{Binding ArtifactType}" Width="120" />
+                                            <DataGridTextColumn Header="Enrollment ID" Binding="{Binding EnrollmentId}" Width="220" />
+                                            <DataGridTextColumn Header="Path" Binding="{Binding ArtifactPath}" Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                    <TextBlock Text="{Binding ReenrollPreview.ConfirmationText, StringFormat=Type exactly: {0}, TargetNullValue=Type exactly: REENROLL &lt;HOST&gt;}" FontWeight="Bold" />
+                                    <TextBox Margin="0,8,0,8" Text="{Binding ConfirmReenrollInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Button Style="{StaticResource AppDangerIconTextButtonStyle}"
+                                            Tag="&#xE7BA;"
+                                            Content="Execute Re-enroll"
+                                            Command="{Binding ExecuteReenrollCommand}"
+                                            IsEnabled="{Binding CanExecuteReenroll}"
+                                            HorizontalAlignment="Left" />
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <TabItem Header="MDM Events">
+                    <Grid Margin="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" MinHeight="220" />
+                            <RowDefinition Height="6" />
+                            <RowDefinition Height="260" MinHeight="180" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <Button Content="Load MDM Events" Command="{Binding LoadMdmEventsCommand}" />
+                            <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Count" FontWeight="SemiBold" />
+                            <ComboBox Width="90"
+                                      Margin="0,0,8,8"
+                                      VerticalAlignment="Center"
+                                      ItemsSource="{Binding MdmEventLoadOptions}"
+                                      SelectedItem="{Binding MdmEventLoadCount, Mode=TwoWay}" />
+                            <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Event ID" FontWeight="SemiBold" />
+                            <TextBox Width="140"
+                                     Margin="0,0,8,8"
+                                     VerticalAlignment="Center"
+                                     Text="{Binding MdmEventIdFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <CheckBox Margin="0,4,12,0"
+                                      VerticalAlignment="Center"
+                                      Content="Critical"
+                                      IsChecked="{Binding ShowMdmCriticalEvents, Mode=TwoWay}" />
+                            <CheckBox Margin="0,4,12,0"
+                                      VerticalAlignment="Center"
+                                      Content="Errors"
+                                      IsChecked="{Binding ShowMdmErrorEvents, Mode=TwoWay}" />
+                            <CheckBox Margin="0,4,12,0"
+                                      VerticalAlignment="Center"
+                                      Content="Warnings"
+                                      IsChecked="{Binding ShowMdmWarningEvents, Mode=TwoWay}" />
+                            <CheckBox Margin="0,4,0,0"
+                                      VerticalAlignment="Center"
+                                      Content="Info"
+                                      IsChecked="{Binding ShowMdmInfoEvents, Mode=TwoWay}" />
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="1" Margin="0,0,0,8" Text="{Binding MdmEventsStatus}" TextWrapping="Wrap" />
+
+                        <GroupBox Grid.Row="2" Header="Analyzed Findings">
+                            <DataGrid x:Name="MdmEventsDataGrid"
+                                      ItemsSource="{Binding MdmEvents}"
+                                      SelectedItem="{Binding SelectedMdmEvent, Mode=TwoWay}"
+                                      SelectionUnit="FullRow"
+                                      SelectionMode="Single"
+                                      ScrollViewer.ScrollChanged="MdmEventsDataGrid_OnScrollChanged"
+                                      MinHeight="260">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Time" Binding="{Binding TimeCreated}" Width="175" />
+                                    <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="90" />
+                                    <DataGridTextColumn Header="Policy" Binding="{Binding PolicyName}" Width="180" />
+                                    <DataGridTextColumn Header="Area" Binding="{Binding Area}" Width="130" />
+                                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
+                                    <DataGridTextColumn Header="Event ID" Binding="{Binding Id}" Width="80" />
+                                        <DataGridTextColumn Header="Result" Binding="{Binding ResultCode}" Width="110">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style BasedOn="{StaticResource ResolvedCodeTextStyle}" TargetType="TextBlock">
+                                                    <Setter Property="ToolTip" Value="{Binding ResolvedError}" />
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+
+                        <GridSplitter Grid.Row="3"
+                                      Height="6"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch"
+                                      Background="#CCD6E3"
+                                      ResizeDirection="Rows"
+                                      ResizeBehavior="PreviousAndNext"
+                                      ShowsPreview="True" />
+
+                        <GroupBox Grid.Row="4" Header="Selected Event Details">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="Summary" FontWeight="Bold" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedMdmEvent.Summary, TargetNullValue=No event selected.}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Row="1" Text="Resolved Error" FontWeight="Bold" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedMdmEvent.ResolvedError, TargetNullValue=-}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Row="2" Text="Policy" FontWeight="Bold" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedMdmEvent.PolicyName, TargetNullValue=-}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Row="3" Text="Area" FontWeight="Bold" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedMdmEvent.Area, TargetNullValue=-}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Row="4" Text="CSP URI" FontWeight="Bold" />
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedMdmEvent.CspUri, TargetNullValue=-}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Row="5" Text="Enrollment ID" FontWeight="Bold" />
+                                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding SelectedMdmEvent.EnrollmentId, TargetNullValue=-}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Row="6" Text="Action" FontWeight="Bold" />
+                                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SelectedMdmEvent.RecommendedAction, TargetNullValue=-}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Row="7" Text="Raw Event Message" FontWeight="Bold" VerticalAlignment="Top" />
+                                <TextBox Grid.Row="7"
+                                         Grid.Column="1"
+                                         MinHeight="180"
+                                         Text="{Binding SelectedMdmEvent.Message, TargetNullValue=No event selected.}"
+                                         AcceptsReturn="True"
+                                         TextWrapping="Wrap"
+                                         IsReadOnly="True"
+                                         VerticalScrollBarVisibility="Auto" />
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="IME Applications">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" MinHeight="220" />
+                        </Grid.RowDefinitions>
+
+                        <WrapPanel Grid.Row="0" Margin="0,0,0,8">
+                            <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE8B7;" Content="Load App Status List" Command="{Binding LoadImeApplicationsCommand}" />
+                            <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}" Tag="&#xE72C;" Content="Clear All Failed" Command="{Binding ActionRetryWin32AllCommand}" />
+                            <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE777;" Content="Restart IME"
+                                    Command="{Binding ActionRestartImeCommand}"
+                                    ToolTip="Restarts the Intune Management Extension service to trigger app re-evaluation." />
+                            <ToggleButton Content="Fast First Check-in (Non-ESP)"
+                                          IsChecked="{Binding IsImeTestModeEnabled, Mode=TwoWay}"
+                                          Command="{Binding SetImeTestModeCommand}"
+                                          CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}"
+                                          ToolTip="Speeds up the first run after IME service start (outside ESP) by skipping the extra 30-240s and 30-300s startup delays. It still keeps the initial 30-60s delay. ON writes HKLM\\Software\\Microsoft\\IntuneManagementExtension\\Settings\\TestMode=true, OFF removes TestMode." />
+                            <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Search" FontWeight="SemiBold" />
+                            <TextBox Width="220"
+                                     Margin="0,0,8,0"
+                                     VerticalAlignment="Center"
+                                     Text="{Binding ImeAppSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Status" FontWeight="SemiBold" />
+                            <ComboBox Width="150"
+                                      Margin="0,0,12,0"
+                                      VerticalAlignment="Center"
+                                      ItemsSource="{Binding ImeAppStatusOptions}"
+                                      SelectedItem="{Binding ImeAppStatusFilter, Mode=TwoWay}" />
+                            <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Flow" FontWeight="SemiBold" />
+                            <ComboBox Width="160"
+                                      Margin="0,0,12,0"
+                                      VerticalAlignment="Center"
+                                      ItemsSource="{Binding ImeApplicationFlowOptions}"
+                                      SelectedItem="{Binding ImeApplicationFlowFilter, Mode=TwoWay}" />
+                            <CheckBox Margin="0,4,12,0"
+                                      VerticalAlignment="Center"
+                                      Content="Show without intent"
+                                      IsChecked="{Binding ShowImeAppsWithoutIntent, Mode=TwoWay}" />
+                            <CheckBox Margin="0,4,0,0"
+                                      VerticalAlignment="Center"
+                                      Content="Show 000000* apps"
+                                      IsChecked="{Binding ShowImeSystemPlaceholderApps, Mode=TwoWay}" />
+                            <TextBlock Margin="12,4,0,0" VerticalAlignment="Center" Text="Right click an app row for 'Clear App State'." />
+                        </WrapPanel>
+
+                        <TextBlock Grid.Row="1" Margin="0,0,0,8" Text="{Binding ImeAppsStatus}" TextWrapping="Wrap" />
+
+                        <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <GroupBox Grid.Row="0" Header="Win32 App Status">
+                                <Grid>
+                                    <DataGrid x:Name="ImeApplicationsDataGrid"
+                                              ItemsSource="{Binding ImeApplications}"
+                                              IsReadOnly="True"
+                                              SelectedItem="{Binding SelectedImeApplication, Mode=TwoWay}">
+                                        <DataGrid.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Clear App State"
+                                                          Command="{Binding PlacementTarget.DataContext.ClearImeAppStateCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                          CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                            </ContextMenu>
+                                        </DataGrid.ContextMenu>
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Application" Binding="{Binding AppName}" Width="240" />
+                                            <DataGridTextColumn Header="Intent" Binding="{Binding Intent}" Width="110" />
+                                            <DataGridTextColumn Header="Install Context" Binding="{Binding InstallContextSummary}" Width="120" />
+                                            <DataGridTextColumn Header="Target" Binding="{Binding TargetInstallContext}" Width="110" />
+                                            <DataGridTextColumn Header="Applicable" Binding="{Binding ApplicabilitySummary, Mode=OneWay}" Width="120" />
+                                            <DataGridTextColumn Header="Dependencies" Binding="{Binding DependencySummary, Mode=OneWay}" Width="150" />
+                                            <DataGridTextColumn Header="Status" Binding="{Binding InstallStatus}" Width="110" />
+                                            <DataGridTextColumn Header="Installed (Any)" Binding="{Binding IsInstalledForAnyIdentity, Mode=OneWay}" Width="120" />
+                                            <DataGridTextColumn Header="Last Update" Binding="{Binding LastUpdated}" Width="170" />
+                                            <DataGridTextColumn Header="Result" Binding="{Binding ResultCode}" Width="110">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style BasedOn="{StaticResource ResolvedCodeTextStyle}" TargetType="TextBlock">
+                                                        <Setter Property="ToolTip" Value="{Binding ResultCodeDescription}" />
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
+                                            <DataGridTextColumn Header="AppId" Binding="{Binding AppId}" Width="260" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+
+                                    <Border Style="{StaticResource SectionLoadingOverlayStyle}"
+                                            Visibility="{Binding IsImeApplicationsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <ProgressBar Width="180"
+                                                         Height="6"
+                                                         Margin="0,0,0,10"
+                                                         IsIndeterminate="True" />
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       FontWeight="SemiBold"
+                                                       Text="Loading Intune app list..." />
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </GroupBox>
+
+                            <Expander Grid.Row="1"
+                                      Margin="0,6,0,0"
+                                      Header="Selected App Details"
+                                      IsExpanded="{Binding IsImeAppDetailsExpanded, Mode=TwoWay}">
+                                <ScrollViewer MaxHeight="360"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" TextWrapping="Wrap">
+                                            <Run Text="Application: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.AppName, Mode=OneWay, TargetNullValue=No app selected.}" />
+                                            <Run Text=" | AppId: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.AppId, Mode=OneWay, TargetNullValue=-}" />
+                                        </TextBlock>
+                                        <TextBlock Grid.Row="1" TextWrapping="Wrap">
+                                            <Run Text="Intent: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.Intent, Mode=OneWay, TargetNullValue=-}" />
+                                            <Run Text=" | Install Context: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.InstallContextSummary, Mode=OneWay, TargetNullValue=-}" />
+                                            <Run Text=" | Target: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.TargetInstallContext, Mode=OneWay, TargetNullValue=-}" />
+                                            <Run Text=" | Applicable: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.ApplicabilitySummary, Mode=OneWay, TargetNullValue=-}" />
+                                            <Run Text=" | Dependencies: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.DependencySummary, Mode=OneWay, TargetNullValue=-}" />
+                                            <Run Text=" | " />
+                                            <Run Text="Aggregated Status: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.InstallStatus, Mode=OneWay, TargetNullValue=-}" />
+                                            <Run Text=" | Result: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.ResultCode, Mode=OneWay, TargetNullValue=-}" />
+                                            <Run Text=" | Installed any user/system: " FontWeight="Bold" />
+                                            <Run Text="{Binding SelectedImeApplication.IsInstalledForAnyIdentity, Mode=OneWay, TargetNullValue=-}" />
+                                        </TextBlock>
+
+                                        <DataGrid Grid.Row="2"
+                                                  Margin="0,8,0,8"
+                                                  Height="170"
+                                                  IsReadOnly="True"
+                                                  ItemsSource="{Binding SelectedImeApplicationIdentityStatuses}">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Scope" Binding="{Binding Scope}" Width="90" />
+                                                <DataGridTextColumn Header="Identity" Binding="{Binding IdentityId}" Width="250" />
+                                                <DataGridTextColumn Header="Applicable" Binding="{Binding ApplicabilityStatus, Mode=OneWay}" Width="120" />
+                                                <DataGridTextColumn Header="Dependencies" Binding="{Binding DependencyStatus, Mode=OneWay}" Width="150" />
+                                                <DataGridTextColumn Header="Status" Binding="{Binding InstallStatus}" Width="120" />
+                                                <DataGridTextColumn Header="Last Update" Binding="{Binding LastUpdated}" Width="170" />
+                                                <DataGridTextColumn Header="Result" Binding="{Binding ResultCode}" Width="120">
+                                                    <DataGridTextColumn.ElementStyle>
+                                                        <Style BasedOn="{StaticResource ResolvedCodeTextStyle}" TargetType="TextBlock">
+                                                            <Setter Property="ToolTip" Value="{Binding ResultCodeDescription}" />
+                                                        </Style>
+                                                    </DataGridTextColumn.ElementStyle>
+                                                </DataGridTextColumn>
+                                                <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="170" />
+                                                <DataGridTextColumn Header="Details" Binding="{Binding Details}" Width="*" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </Grid>
+                                </ScrollViewer>
+                            </Expander>
+                        </Grid>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="IME Timeline">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" MinHeight="420" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                            <WrapPanel>
+                                <Button Content="Load IME Timeline" Command="{Binding LoadImeLogTimelineCommand}" />
+                                <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Max Lines" FontWeight="SemiBold" />
+                                <ComboBox Width="100"
+                                          Margin="0,0,8,8"
+                                          VerticalAlignment="Center"
+                                          ItemsSource="{Binding ImeTimelineLoadOptions}"
+                                          SelectedItem="{Binding ImeTimelineMaxLines, Mode=TwoWay}" />
+                                <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Line Filter" FontWeight="SemiBold" />
+                                <TextBox Width="180"
+                                         Margin="0,0,8,8"
+                                         VerticalAlignment="Center"
+                                         Text="{Binding ImeLogSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox Margin="0,4,12,0"
+                                          VerticalAlignment="Center"
+                                          Content="Errors"
+                                          IsChecked="{Binding ShowImeErrorEntries, Mode=TwoWay}" />
+                                <CheckBox Margin="0,4,12,0"
+                                          VerticalAlignment="Center"
+                                          Content="Warnings"
+                                          IsChecked="{Binding ShowImeWarningEntries, Mode=TwoWay}" />
+                                <CheckBox Margin="0,4,12,0"
+                                          VerticalAlignment="Center"
+                                          Content="Info"
+                                          IsChecked="{Binding ShowImeInformationEntries, Mode=TwoWay}" />
+                                <CheckBox Margin="0,4,0,0"
+                                          VerticalAlignment="Center"
+                                          Content="Verbose"
+                                          IsChecked="{Binding ShowImeVerboseEntries, Mode=TwoWay}" />
+                            </WrapPanel>
+
+                            <WrapPanel>
+                                <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Flow" FontWeight="SemiBold" />
+                                <ComboBox Width="150"
+                                          Margin="0,0,8,8"
+                                          ItemsSource="{Binding ImeFlowTypeOptions}"
+                                          SelectedItem="{Binding ImeFlowTypeFilter, Mode=TwoWay}" />
+                                <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Component" FontWeight="SemiBold" />
+                                <ComboBox Width="220"
+                                          Margin="0,0,8,8"
+                                          ItemsSource="{Binding ImeTimelineComponentOptions}"
+                                          SelectedItem="{Binding ImeTimelineComponentFilter, Mode=TwoWay}" />
+                            </WrapPanel>
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="1" Margin="0,0,0,8" Text="{Binding ImeLogsStatus}" TextWrapping="Wrap" />
+
+                        <GroupBox Grid.Row="2" Header="Timeline Drilldown">
+                            <DataGrid x:Name="ImeTimelineDataGrid"
+                                      ItemsSource="{Binding ImeTimelineEntries}"
+                                      SelectedItem="{Binding SelectedImeLogEntry, Mode=TwoWay}"
+                                      RowStyle="{StaticResource ImeTimelineRowStyle}"
+                                      ScrollViewer.ScrollChanged="ImeTimelineDataGrid_OnScrollChanged"
+                                      SelectionChanged="ImeTimelineDataGrid_OnSelectionChanged"
+                                      SizeChanged="ImeTimelineDataGrid_OnSizeChanged"
+                                      MouseDoubleClick="ImeTimelineDataGrid_OnMouseDoubleClick"
+                                      MinHeight="420">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn x:Name="ImeTimelineEntryColumn"
+                                                            Header="Entry"
+                                                            Width="800">
+                                        <DataGridTemplateColumn.ClipboardContentBinding>
+                                            <MultiBinding StringFormat="{}{0:yyyy-MM-dd HH:mm:ss} {1} {2}">
+                                                <Binding Path="TimeCreated" />
+                                                <Binding Path="Severity" />
+                                                <Binding Path="Message" />
+                                            </MultiBinding>
+                                        </DataGridTemplateColumn.ClipboardContentBinding>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,4,0,4">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="165" />
+                                                        <ColumnDefinition Width="85" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Grid.Column="0"
+                                                               Margin="0,0,8,0"
+                                                               Text="{Binding TimeCreated, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+                                                    <TextBlock Grid.Column="1"
+                                                               Margin="0,0,8,0"
+                                                               Text="{Binding Severity}" />
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="{Binding Message}"
+                                                               TextWrapping="Wrap" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Flow" Binding="{Binding FlowDisplay}" Width="Auto" />
+                                    <DataGridTextColumn Header="Component" Binding="{Binding Component}" Width="Auto" />
+                                    <DataGridTextColumn Header="Action" Binding="{Binding EffectDisplay}" Width="Auto" />
+                                    <DataGridTextColumn Header="Entity" Binding="{Binding EntityDisplay}" Width="Auto" />
+                                    <DataGridTextColumn Header="Result" Binding="{Binding ResultCodeDisplay}" Width="Auto">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style BasedOn="{StaticResource ResolvedCodeTextStyle}" TargetType="TextBlock">
+                                                <Setter Property="ToolTip" Value="{Binding ResultCodeDescription}" />
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Correlation" Binding="{Binding CorrelationDisplay}" Width="Auto" />
+                                    <DataGridTextColumn Header="Source" Binding="{Binding SourceLocationDisplay}" Width="Auto" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Local Actions">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <GroupBox Header="MDM Actions">
+                                <StackPanel>
+                                    <WrapPanel>
+                                        <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}"
+                                                Tag="&#xE895;"
+                                                Content="MDM Sync Now"
+                                                Command="{Binding ActionMdmSyncNowCommand}" />
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Max Events" FontWeight="SemiBold" />
+                                        <TextBox Width="90"
+                                                 Margin="0,0,8,8"
+                                                 Text="{Binding SyncStatusMaxEvents, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Style="{StaticResource AppIconTextButtonStyle}"
+                                                Tag="&#xE8A5;"
+                                                Content="MDM Sync Status"
+                                                Command="{Binding ActionMdmSyncStatusCommand}" />
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Report Dir" FontWeight="SemiBold" />
+                                        <TextBox Width="480"
+                                                 Margin="0,0,8,8"
+                                                 Text="{Binding MdmReportDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Content="Generate MDM Report" Command="{Binding ActionGenerateMdmReportCommand}" />
+                                        <Button Content="Parse MDM Report" Command="{Binding ActionParseMdmReportCommand}" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Header="IME Actions">
+                                <StackPanel>
+                                    <WrapPanel>
+                                        <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}"
+                                                Tag="&#xE895;"
+                                                Content="IME Sync Apps"
+                                                Command="{Binding ActionImeSyncAppsCommand}" />
+                                        <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}"
+                                                Tag="&#xE895;"
+                                                Content="IME Sync Compliance"
+                                                Command="{Binding ActionImeSyncComplianceCommand}" />
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="IME Logs" FontWeight="SemiBold" />
+                                        <TextBox Width="480"
+                                                 Margin="0,0,8,8"
+                                                 Text="{Binding ImeLogDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Content="Load IME Timeline" Command="{Binding LoadImeLogTimelineCommand}" />
+                                        <Button Content="Parse AppWorkload Policy" Command="{Binding ActionParseAppWorkloadCommand}" />
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Task Contains" FontWeight="SemiBold" />
+                                        <TextBox Width="220"
+                                                 Margin="0,0,8,8"
+                                                 Text="{Binding ImeTaskNameContains, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Content="Run Health Eval" Command="{Binding ActionRunImeHealthEvalCommand}" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Header="Support Actions">
+                                <StackPanel>
+                                    <WrapPanel>
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Support Out" FontWeight="SemiBold" />
+                                        <TextBox Width="520"
+                                                 Margin="0,0,8,8"
+                                                 Text="{Binding SupportOutputDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Content="Export EventLogs" Command="{Binding ActionExportSupportEventLogsCommand}" />
+                                    </WrapPanel>
+                                    <WrapPanel>
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Bundle Root" FontWeight="SemiBold" />
+                                        <TextBox Width="320"
+                                                 Margin="0,0,8,8"
+                                                 Text="{Binding BundleRootDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Bundle Zip" FontWeight="SemiBold" />
+                                        <TextBox Width="320"
+                                                 Margin="0,0,8,8"
+                                                 Text="{Binding BundleZipPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Content="Create Diagnostics Bundle" Command="{Binding ActionCreateBundleCommand}" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Header="Enrollment Repair">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding EnrollmentStatus.EnrollmentUrls.Summary, TargetNullValue=No enrollment URL check loaded.}"
+                                               TextWrapping="Wrap" />
+                                    <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding EnrollmentStatus.EnrollmentUrls.Warnings}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Margin="0,0,0,4"
+                                                           Foreground="#9A1D1D"
+                                                           Text="{Binding}"
+                                                           TextWrapping="Wrap" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Button Margin="0,8,0,0"
+                                            Content="Fix Enrollment URLs"
+                                            Command="{Binding FixEnrollmentUrlsCommand}"
+                                            IsEnabled="{Binding CanFixEnrollmentUrls}"
+                                            HorizontalAlignment="Left" />
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Header="Community Scripts">
+                                <StackPanel>
+                                    <WrapPanel>
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Script" FontWeight="SemiBold" />
+                                        <ComboBox Width="280"
+                                                  Margin="0,0,8,8"
+                                                  ItemsSource="{Binding CommunityScriptOptions}"
+                                                  SelectedItem="{Binding SelectedCommunityScript, Mode=TwoWay}" />
+                                        <Button Content="Run Selected Script"
+                                                Margin="0,0,8,8"
+                                                Command="{Binding ActionRunSelectedCommunityScriptCommand}" />
+                                    </WrapPanel>
+                                    <WrapPanel IsEnabled="{Binding IsAutopilotCommunityScriptSelected}">
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Module Version" FontWeight="SemiBold" />
+                                        <TextBox Width="90"
+                                                 Margin="0,0,8,8"
+                                                 Text="{Binding AutopilotDiagnosticsModuleVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <CheckBox Margin="0,5,8,0"
+                                                  VerticalAlignment="Center"
+                                                  Content="All Sessions"
+                                                  IsChecked="{Binding AutopilotDiagnosticsAllSessions, Mode=TwoWay}" />
+                                        <CheckBox Margin="0,5,8,0"
+                                                  VerticalAlignment="Center"
+                                                  Content="Show Policies"
+                                                  IsChecked="{Binding AutopilotDiagnosticsShowPolicies, Mode=TwoWay}" />
+                                        <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Max Lines" FontWeight="SemiBold" />
+                                        <TextBox Width="90"
+                                                 Margin="0,0,8,8"
+                                                 Text="{Binding AutopilotDiagnosticsMaxOutputLines, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Content="Run Autopilot Diagnostics (Community)"
+                                                Command="{Binding ActionAutopilotDiagnosticsCommunityCommand}" />
+                                    </WrapPanel>
+                                    <TextBlock Text="{Binding SelectedCommunityScriptDescription}"
+                                               Foreground="#3D4F65"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+                            </GroupBox>
+
+                            <GroupBox Header="Action Result">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding LocalActionStatus}" TextWrapping="Wrap" />
+                                    <TextBox Margin="0,8,0,8"
+                                             MinHeight="70"
+                                             Text="{Binding LocalActionWarnings}"
+                                             AcceptsReturn="True"
+                                             TextWrapping="Wrap"
+                                             IsReadOnly="True"
+                                             VerticalScrollBarVisibility="Auto" />
+                                    <TextBlock Text="Script Output" FontWeight="SemiBold" />
+                                    <TextBox Margin="0,8,0,8"
+                                             MinHeight="180"
+                                             MaxHeight="420"
+                                             Text="{Binding LocalActionOutputText}"
+                                             AcceptsReturn="True"
+                                             TextWrapping="Wrap"
+                                             IsReadOnly="True"
+                                             VerticalScrollBarVisibility="Auto" />
+                                    <DataGrid ItemsSource="{Binding LocalActionEvidence}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Key" Binding="{Binding Name}" Width="240" />
+                                            <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="*" />
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <TabItem Header="Policy Result">
+                    <TabControl Margin="0">
+                        <TabItem Header="Controls">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="0,0,0,8">
+                                    <GroupBox Header="Policy Result Actions">
+                                        <StackPanel>
+                                            <WrapPanel>
+                                                <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Report Dir" FontWeight="SemiBold" />
+                                                <TextBox Width="470"
+                                                     Margin="0,0,8,8"
+                                                     Text="{Binding PolicyResultReportDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <Button Content="Generate Policy Result" Command="{Binding GeneratePolicyResultCommand}" />
+                                                <Button Content="Parse Policy Result" Command="{Binding ParsePolicyResultCommand}" />
+                                            </WrapPanel>
+                                            <WrapPanel>
+                                                <TextBlock Margin="0,4,8,0" VerticalAlignment="Center" Text="Export Dir" FontWeight="SemiBold" />
+                                                <TextBox Width="470"
+                                                     Margin="0,0,8,8"
+                                                     Text="{Binding PolicyResultExportDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                <Button Content="Export Policy Result" Command="{Binding ExportPolicyResultCommand}" />
+                                            </WrapPanel>
+                                        </StackPanel>
+                                    </GroupBox>
+
+                                    <GroupBox Header="Summary">
+                                        <WrapPanel>
+                                            <TextBlock Margin="0,0,14,6" Text="{Binding PolicyResultTotalCount, StringFormat=Total: {0}}" FontWeight="SemiBold" />
+                                            <TextBlock Margin="0,0,14,6" Text="{Binding PolicyResultAppliedCount, StringFormat=Applied: {0}}" FontWeight="SemiBold" Foreground="#0B6E4F" />
+                                            <TextBlock Margin="0,0,14,6" Text="{Binding PolicyResultFailedCount, StringFormat=Failed: {0}}" FontWeight="SemiBold" Foreground="#8F1E2D" />
+                                            <TextBlock Margin="0,0,14,6" Text="{Binding PolicyResultUnknownCount, StringFormat=Unknown: {0}}" FontWeight="SemiBold" Foreground="#6A7079" />
+                                            <TextBlock Margin="0,0,14,6" Text="{Binding PolicyResultDeviceCount, StringFormat=Device: {0}}" FontWeight="SemiBold" />
+                                            <TextBlock Margin="0,0,14,6" Text="{Binding PolicyResultUserCount, StringFormat=User: {0}}" FontWeight="SemiBold" />
+                                            <TextBlock Margin="0,0,14,6" Text="{Binding PolicyResultUnknownScopeCount, StringFormat=Unknown Scope: {0}}" FontWeight="SemiBold" />
+                                        </WrapPanel>
+                                    </GroupBox>
+
+                                    <GroupBox Header="Status">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding PolicyResultStatus}" TextWrapping="Wrap" />
+                                            <TextBox Margin="0,8,0,0"
+                                                 MinHeight="52"
+                                                 Text="{Binding PolicyResultWarnings}"
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="Wrap"
+                                                 IsReadOnly="True"
+                                                 VerticalScrollBarVisibility="Auto" />
+                                            <TextBlock Margin="0,8,0,0" Text="{Binding PolicyReportHtmlPath, StringFormat=HTML: {0}}" TextWrapping="Wrap" />
+                                            <TextBlock Text="{Binding PolicyReportJsonPath, StringFormat=JSON: {0}}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </GroupBox>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+                        <TabItem Header="Report">
+                            <Grid>
+                                <WebBrowser x:Name="PolicyResultBrowser" />
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </TabItem>
+
+                <TabItem Header="Cloud">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <Border Margin="0,0,0,8"
+                                    Padding="10,8"
+                                    BorderBrush="#E0A000"
+                                    BorderThickness="1"
+                                    Background="#FFF9E6">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCloudConfigured}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding CloudConfigurationWarning}" TextWrapping="Wrap" Foreground="#7A5300" FontWeight="SemiBold" />
+                            </Border>
+
+                            <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsCloudControlsEnabled}">
+                                <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}" Tag="&#xE77B;" Content="Sign In" Command="{Binding SignInCommand}" />
+                                <Button Style="{StaticResource AppIconTextButtonStyle}" Tag="&#xE8B7;" Content="Resolve Device" Command="{Binding RefreshCloudCommand}" />
+                                <Button Style="{StaticResource AppPrimaryIconTextButtonStyle}" Tag="&#xE895;" Content="Sync Device" Command="{Binding TriggerCloudSyncCommand}" IsEnabled="{Binding CanTriggerCloudSync}" />
+                            </StackPanel>
+                            <GroupBox Header="Session" IsEnabled="{Binding IsCloudControlsEnabled}">
+                                <TextBlock Text="{Binding AuthenticationSummary}" TextWrapping="Wrap" />
+                            </GroupBox>
+                            <GroupBox Header="Cloud Device" IsEnabled="{Binding IsCloudControlsEnabled}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="Status" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CloudStatus}" TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="1" Text="Managed device" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CloudDeviceSummary}" TextWrapping="Wrap" />
+                                    <TextBlock Grid.Row="2" Text="User" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CloudDevice.UserPrincipalName, TargetNullValue=-}" />
+                                    <TextBlock Grid.Row="3" Text="Last cloud sync" FontWeight="Bold" />
+                                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding CloudDevice.LastSyncDateTime, TargetNullValue=-}" />
+                                </Grid>
+                            </GroupBox>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Border>
+</UserControl>

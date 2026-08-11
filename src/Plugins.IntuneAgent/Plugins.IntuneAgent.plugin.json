@@ -1,0 +1,8 @@
+{
+  "id": "intune-agent",
+  "displayName": "Intune Agent",
+  "version": "1.0.0",
+  "menuPath": "Intune Agent",
+  "assembly": "Plugins.IntuneAgent.dll",
+  "type": "WindowsClientCenter.Plugins.IntuneAgent.IntuneAgentPlugin"
+}

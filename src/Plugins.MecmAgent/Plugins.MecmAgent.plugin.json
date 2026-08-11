@@ -1,0 +1,10 @@
+{
+  "id": "mecm-agent",
+  "displayName": "MECM",
+  "version": "1.0.0",
+  "capability": "View",
+  "menuPath": "MECM",
+  "minHostVersion": "1.0.0",
+  "assembly": "Plugins.MecmAgent.dll",
+  "type": "WindowsClientCenter.Plugins.MecmAgent.MecmAgentPlugin"
+}
