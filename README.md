@@ -12,28 +12,29 @@ Windows Client Center is a Windows desktop troubleshooting shell for Intune-mana
 
 ## Screenshots
 
+![Windows Client Center device overview](docs/images/shell-overview.png)
+
+Device overview with cloud status, local system details, platform security, runtime state, networking, and client health.
+
 <details>
-<summary><strong>Show screenshot gallery (37 views)</strong></summary>
+<summary><strong>Show screenshot gallery (36 additional views)</strong></summary>
 <br>
 
 <h3>Device</h3>
 <table>
   <tr>
-    <td><a href="docs/images/shell-overview.png"><img src="docs/images/shell-overview.png" width="300" alt="Device overview"></a><br><sub>Overview</sub></td>
     <td><a href="docs/images/device-bitlocker.png"><img src="docs/images/device-bitlocker.png" width="300" alt="Device BitLocker"></a><br><sub>BitLocker</sub></td>
     <td><a href="docs/images/device-actions.png"><img src="docs/images/device-actions.png" width="300" alt="Device actions"></a><br><sub>Actions</sub></td>
+    <td><a href="docs/images/device-appx-applications.png"><img src="docs/images/device-appx-applications.png" width="300" alt="Device AppX applications"></a><br><sub>AppX Applications</sub></td>
   </tr>
   <tr>
-    <td><a href="docs/images/device-appx-applications.png"><img src="docs/images/device-appx-applications.png" width="300" alt="Device AppX applications"></a><br><sub>AppX Applications</sub></td>
     <td><a href="docs/images/device-installed-software.png"><img src="docs/images/device-installed-software.png" width="300" alt="Device installed software"></a><br><sub>Installed Software</sub></td>
     <td><a href="docs/images/device-delivery-optimization.png"><img src="docs/images/device-delivery-optimization.png" width="300" alt="Device Delivery Optimization"></a><br><sub>Delivery Optimization</sub></td>
+    <td><a href="docs/images/device-port-authentication.png"><img src="docs/images/device-port-authentication.png" width="300" alt="Device port authentication"></a><br><sub>Port Authentication</sub></td>
   </tr>
   <tr>
-    <td><a href="docs/images/device-port-authentication.png"><img src="docs/images/device-port-authentication.png" width="300" alt="Device port authentication"></a><br><sub>Port Authentication</sub></td>
     <td><a href="docs/images/device-processes.png"><img src="docs/images/device-processes.png" width="300" alt="Device processes"></a><br><sub>Processes</sub></td>
     <td><a href="docs/images/device-profiles.png"><img src="docs/images/device-profiles.png" width="300" alt="Device profiles"></a><br><sub>Profiles</sub></td>
-  </tr>
-  <tr>
     <td><a href="docs/images/device-services.png"><img src="docs/images/device-services.png" width="300" alt="Device services"></a><br><sub>Services</sub></td>
   </tr>
 </table>
