@@ -55,9 +55,42 @@ public static class HostStartupArgumentParser
         new(
         [
             new ScreenshotCaptureTarget("Device/Overview", "shell-overview.png"),
+            new ScreenshotCaptureTarget("Device/BitLocker", "device-bitlocker.png"),
+            new ScreenshotCaptureTarget("Device/Actions", "device-actions.png"),
+            new ScreenshotCaptureTarget("Device/AppX Applications", "device-appx-applications.png"),
+            new ScreenshotCaptureTarget("Device/Installed Software", "device-installed-software.png"),
+            new ScreenshotCaptureTarget("Device/Delivery Optimization", "device-delivery-optimization.png"),
+            new ScreenshotCaptureTarget("Device/Port Authentication", "device-port-authentication.png"),
+            new ScreenshotCaptureTarget("Device/Processes", "device-processes.png"),
+            new ScreenshotCaptureTarget("Device/Profiles", "device-profiles.png"),
+            new ScreenshotCaptureTarget("Device/Services", "device-services.png"),
+            new ScreenshotCaptureTarget("Intune Agent/Overview", "intune-agent.png"),
+            new ScreenshotCaptureTarget("Intune Agent/Local Diagnostics", "intune-local-diagnostics.png"),
+            new ScreenshotCaptureTarget("Intune Agent/Enrollment", "intune-enrollment.png"),
+            new ScreenshotCaptureTarget("Intune Agent/MDM Events", "intune-mdm-events.png"),
+            new ScreenshotCaptureTarget("Intune Agent/IME Logs", "intune-ime-logs.png"),
+            new ScreenshotCaptureTarget("Intune Agent/IME Applications", "intune-ime-applications.png"),
+            new ScreenshotCaptureTarget("Intune Agent/Local Actions", "intune-local-actions.png"),
+            new ScreenshotCaptureTarget("Intune Agent/Policy Result", "intune-policy-result.png"),
+            new ScreenshotCaptureTarget("Intune Agent/Cloud", "intune-cloud.png"),
+            new ScreenshotCaptureTarget("MECM/Overview", "mecm-overview.png"),
+            new ScreenshotCaptureTarget("MECM/Applications", "mecm-applications.png"),
+            new ScreenshotCaptureTarget("MECM/Updates/Pending", "mecm-updates-pending.png"),
+            new ScreenshotCaptureTarget("MECM/Updates/All", "mecm-updates-all.png"),
+            new ScreenshotCaptureTarget("MECM/Packages", "mecm-packages.png"),
+            new ScreenshotCaptureTarget("MECM/DCM Baselines", "mecm-dcm-baselines.png"),
+            new ScreenshotCaptureTarget("Defender/Overview", "defender-overview.png"),
+            new ScreenshotCaptureTarget("Defender/Protection Status", "defender-protection-status.png"),
+            new ScreenshotCaptureTarget("Defender/Versions", "defender-versions.png"),
+            new ScreenshotCaptureTarget("Defender/Scans", "defender-scans.png"),
+            new ScreenshotCaptureTarget("Defender/Settings", "defender-settings.png"),
+            new ScreenshotCaptureTarget("Defender/Detections", "defender-detections.png"),
+            new ScreenshotCaptureTarget("Defender/Device Control", "defender-device-control.png"),
             new ScreenshotCaptureTarget("Windows Update Agent/Overview", "windows-update-agent.png"),
+            new ScreenshotCaptureTarget("Windows Update Agent/Available updates", "windows-update-available-updates.png"),
+            new ScreenshotCaptureTarget("Windows Update Agent/Update history", "windows-update-history.png"),
             new ScreenshotCaptureTarget("Windows Update Agent/ReportingEvents.log", "reporting-events-log.png"),
-            new ScreenshotCaptureTarget("Intune Agent/Overview", "intune-agent.png")
+            new ScreenshotCaptureTarget("Windows Update Agent/USO diagnostics", "windows-update-uso-diagnostics.png")
         ]);
 
     private static bool HasFlag(string[] args, string longName)

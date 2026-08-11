@@ -73,11 +73,11 @@
                 <DataGridTextColumn Header="Local Path" Binding="{Binding LocalPath}" Width="220" />
                 <DataGridTextColumn Header="Last Use" Binding="{Binding LastUseDisplay}" Width="140" />
                 <DataGridTextColumn Header="Server Profile Path" Binding="{Binding ServerProfilePath}" Width="190" />
-                <DataGridCheckBoxColumn Header="Loaded" Binding="{Binding IsLoaded}" Width="70" />
-                <DataGridCheckBoxColumn Header="Temp" Binding="{Binding IsTemporary}" Width="60" />
-                <DataGridCheckBoxColumn Header="Roaming" Binding="{Binding IsRoaming}" Width="80" />
-                <DataGridCheckBoxColumn Header="Mandatory" Binding="{Binding IsMandatory}" Width="90" />
-                <DataGridCheckBoxColumn Header="Corrupted" Binding="{Binding IsCorrupted}" Width="90" />
+                <DataGridCheckBoxColumn Header="Loaded" Binding="{Binding IsLoaded, Mode=OneWay}" Width="70" />
+                <DataGridCheckBoxColumn Header="Temp" Binding="{Binding IsTemporary, Mode=OneWay}" Width="60" />
+                <DataGridCheckBoxColumn Header="Roaming" Binding="{Binding IsRoaming, Mode=OneWay}" Width="80" />
+                <DataGridCheckBoxColumn Header="Mandatory" Binding="{Binding IsMandatory, Mode=OneWay}" Width="90" />
+                <DataGridCheckBoxColumn Header="Corrupted" Binding="{Binding IsCorrupted, Mode=OneWay}" Width="90" />
                 <DataGridTextColumn Header="Raw Size" Binding="{Binding RawSizeDisplay}" Width="110" />
                 <DataGridTextColumn Header="Policy Size" Binding="{Binding PolicySizeDisplay}" Width="110" />
                 <DataGridTextColumn Header="Last Calc" Binding="{Binding LastCalculationSummary}" Width="160" />

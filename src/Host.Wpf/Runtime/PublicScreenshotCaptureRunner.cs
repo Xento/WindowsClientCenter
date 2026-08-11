@@ -87,6 +87,7 @@ internal sealed class PublicScreenshotCaptureRunner(
         var rect = await mainWindow.Dispatcher.InvokeAsync(() =>
         {
             viewModel.LogText = "[Demo capture] Runtime log hidden to avoid exposing local environment details.";
+            RedactLocalPaths(mainWindow);
             mainWindow.UpdateLayout();
 
             var windowHandle = new WindowInteropHelper(mainWindow).Handle;
@@ -117,6 +118,22 @@ internal sealed class PublicScreenshotCaptureRunner(
         }
 
         bitmap.Save(outputPath, ImageFormat.Png);
+    }
+
+    private static void RedactLocalPaths(DependencyObject root)
+    {
+        var localBaseDirectory = Path.GetFullPath(AppContext.BaseDirectory).TrimEnd(Path.DirectorySeparatorChar);
+        const string publicBaseDirectory = @"C:\ProgramData\WindowsClientCenter";
+
+        if (root is System.Windows.Controls.TextBox textBox && textBox.Text.Contains(localBaseDirectory, StringComparison.OrdinalIgnoreCase))
+        {
+            textBox.Text = textBox.Text.Replace(localBaseDirectory, publicBaseDirectory, StringComparison.OrdinalIgnoreCase);
+        }
+
+        for (var index = 0; index < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); index++)
+        {
+            RedactLocalPaths(System.Windows.Media.VisualTreeHelper.GetChild(root, index));
+        }
     }
 
     [DllImport("user32.dll", SetLastError = true)]

@@ -12,17 +12,96 @@ Windows Client Center is a Windows desktop troubleshooting shell for Intune-mana
 
 ## Screenshots
 
-![Main shell overview with the Device Overview plugin](docs/images/shell-overview.png)
-Main shell overview with health, runtime, and network cards.
+<details>
+<summary><strong>Show screenshot gallery (37 views)</strong></summary>
+<br>
 
-![Windows Update Agent overview with scan and restart context](docs/images/windows-update-agent.png)
-Windows Update Agent overview with update status, restart handling, and recent activity.
+<h3>Device</h3>
+<table>
+  <tr>
+    <td><a href="docs/images/shell-overview.png"><img src="docs/images/shell-overview.png" width="300" alt="Device overview"></a><br><sub>Overview</sub></td>
+    <td><a href="docs/images/device-bitlocker.png"><img src="docs/images/device-bitlocker.png" width="300" alt="Device BitLocker"></a><br><sub>BitLocker</sub></td>
+    <td><a href="docs/images/device-actions.png"><img src="docs/images/device-actions.png" width="300" alt="Device actions"></a><br><sub>Actions</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/images/device-appx-applications.png"><img src="docs/images/device-appx-applications.png" width="300" alt="Device AppX applications"></a><br><sub>AppX Applications</sub></td>
+    <td><a href="docs/images/device-installed-software.png"><img src="docs/images/device-installed-software.png" width="300" alt="Device installed software"></a><br><sub>Installed Software</sub></td>
+    <td><a href="docs/images/device-delivery-optimization.png"><img src="docs/images/device-delivery-optimization.png" width="300" alt="Device Delivery Optimization"></a><br><sub>Delivery Optimization</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/images/device-port-authentication.png"><img src="docs/images/device-port-authentication.png" width="300" alt="Device port authentication"></a><br><sub>Port Authentication</sub></td>
+    <td><a href="docs/images/device-processes.png"><img src="docs/images/device-processes.png" width="300" alt="Device processes"></a><br><sub>Processes</sub></td>
+    <td><a href="docs/images/device-profiles.png"><img src="docs/images/device-profiles.png" width="300" alt="Device profiles"></a><br><sub>Profiles</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/images/device-services.png"><img src="docs/images/device-services.png" width="300" alt="Device services"></a><br><sub>Services</sub></td>
+  </tr>
+</table>
 
-![ReportingEvents.log live view with correlated log rows](docs/images/reporting-events-log.png)
-`ReportingEvents.log` live view for update-related troubleshooting.
+<h3>Intune Agent</h3>
+<table>
+  <tr>
+    <td><a href="docs/images/intune-agent.png"><img src="docs/images/intune-agent.png" width="300" alt="Intune Agent overview"></a><br><sub>Overview</sub></td>
+    <td><a href="docs/images/intune-local-diagnostics.png"><img src="docs/images/intune-local-diagnostics.png" width="300" alt="Intune local diagnostics"></a><br><sub>Local Diagnostics</sub></td>
+    <td><a href="docs/images/intune-enrollment.png"><img src="docs/images/intune-enrollment.png" width="300" alt="Intune enrollment"></a><br><sub>Enrollment</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/images/intune-mdm-events.png"><img src="docs/images/intune-mdm-events.png" width="300" alt="Intune MDM events"></a><br><sub>MDM Events</sub></td>
+    <td><a href="docs/images/intune-ime-logs.png"><img src="docs/images/intune-ime-logs.png" width="300" alt="Intune IME logs"></a><br><sub>IME Logs</sub></td>
+    <td><a href="docs/images/intune-ime-applications.png"><img src="docs/images/intune-ime-applications.png" width="300" alt="Intune IME applications"></a><br><sub>IME Applications</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/images/intune-local-actions.png"><img src="docs/images/intune-local-actions.png" width="300" alt="Intune local actions"></a><br><sub>Local Actions</sub></td>
+    <td><a href="docs/images/intune-policy-result.png"><img src="docs/images/intune-policy-result.png" width="300" alt="Intune policy result"></a><br><sub>Policy Result</sub></td>
+    <td><a href="docs/images/intune-cloud.png"><img src="docs/images/intune-cloud.png" width="300" alt="Intune cloud"></a><br><sub>Cloud</sub></td>
+  </tr>
+</table>
 
-![Intune Agent view with enrollment and sync details](docs/images/intune-agent.png)
-Intune Agent view with enrollment, sync, and management context.
+<h3>MECM</h3>
+<table>
+  <tr>
+    <td><a href="docs/images/mecm-overview.png"><img src="docs/images/mecm-overview.png" width="300" alt="MECM overview"></a><br><sub>Overview</sub></td>
+    <td><a href="docs/images/mecm-applications.png"><img src="docs/images/mecm-applications.png" width="300" alt="MECM applications"></a><br><sub>Applications</sub></td>
+    <td><a href="docs/images/mecm-updates-pending.png"><img src="docs/images/mecm-updates-pending.png" width="300" alt="MECM pending updates"></a><br><sub>Updates: Pending</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/images/mecm-updates-all.png"><img src="docs/images/mecm-updates-all.png" width="300" alt="All MECM updates"></a><br><sub>Updates: All</sub></td>
+    <td><a href="docs/images/mecm-packages.png"><img src="docs/images/mecm-packages.png" width="300" alt="MECM packages"></a><br><sub>Packages</sub></td>
+    <td><a href="docs/images/mecm-dcm-baselines.png"><img src="docs/images/mecm-dcm-baselines.png" width="300" alt="MECM DCM baselines"></a><br><sub>DCM Baselines</sub></td>
+  </tr>
+</table>
+
+<h3>Windows Defender</h3>
+<table>
+  <tr>
+    <td><a href="docs/images/defender-overview.png"><img src="docs/images/defender-overview.png" width="300" alt="Windows Defender overview"></a><br><sub>Overview</sub></td>
+    <td><a href="docs/images/defender-protection-status.png"><img src="docs/images/defender-protection-status.png" width="300" alt="Windows Defender protection status"></a><br><sub>Protection Status</sub></td>
+    <td><a href="docs/images/defender-versions.png"><img src="docs/images/defender-versions.png" width="300" alt="Windows Defender versions"></a><br><sub>Versions</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/images/defender-scans.png"><img src="docs/images/defender-scans.png" width="300" alt="Windows Defender scans"></a><br><sub>Scans</sub></td>
+    <td><a href="docs/images/defender-settings.png"><img src="docs/images/defender-settings.png" width="300" alt="Windows Defender settings"></a><br><sub>Settings</sub></td>
+    <td><a href="docs/images/defender-detections.png"><img src="docs/images/defender-detections.png" width="300" alt="Windows Defender detections"></a><br><sub>Detections</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/images/defender-device-control.png"><img src="docs/images/defender-device-control.png" width="300" alt="Windows Defender device control"></a><br><sub>Device Control</sub></td>
+  </tr>
+</table>
+
+<h3>Windows Update Agent</h3>
+<table>
+  <tr>
+    <td><a href="docs/images/windows-update-agent.png"><img src="docs/images/windows-update-agent.png" width="300" alt="Windows Update Agent overview"></a><br><sub>Overview</sub></td>
+    <td><a href="docs/images/windows-update-available-updates.png"><img src="docs/images/windows-update-available-updates.png" width="300" alt="Available Windows updates"></a><br><sub>Available Updates</sub></td>
+    <td><a href="docs/images/windows-update-history.png"><img src="docs/images/windows-update-history.png" width="300" alt="Windows Update history"></a><br><sub>Update History</sub></td>
+  </tr>
+  <tr>
+    <td><a href="docs/images/reporting-events-log.png"><img src="docs/images/reporting-events-log.png" width="300" alt="ReportingEvents log"></a><br><sub>ReportingEvents.log</sub></td>
+    <td><a href="docs/images/windows-update-uso-diagnostics.png"><img src="docs/images/windows-update-uso-diagnostics.png" width="300" alt="Windows Update USO diagnostics"></a><br><sub>USO Diagnostics</sub></td>
+  </tr>
+</table>
+
+</details>
 
 ## Status
 
