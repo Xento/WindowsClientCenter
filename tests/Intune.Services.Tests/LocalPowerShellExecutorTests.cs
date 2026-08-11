@@ -59,19 +59,36 @@ public sealed class LocalPowerShellExecutorTests
         using var executor = new LocalPowerShellExecutor(
             new FakeHostConnectivityService(),
             options: new IntuneRuntimeOptions { PowerShellSessionPoolSize = 5 });
+        var gateName = $"WindowsClientCenter-{Guid.NewGuid():N}";
+        using var releaseGate = new EventWaitHandle(false, EventResetMode.ManualReset, gateName);
 
         var tasks = Enumerable.Range(0, 5)
             .Select(index => executor.ExecuteForHostAsync(
                 Environment.MachineName,
-                $"[System.Threading.Thread]::Sleep(250); 'job-{index}'",
+                $"$null = [System.Threading.EventWaitHandle]::OpenExisting('{gateName}').WaitOne(); 'job-{index}'",
                 CancellationToken.None).AsTask())
             .ToArray();
+
+        try
+        {
+            var timeoutAt = DateTime.UtcNow.AddSeconds(10);
+            while (executor.ActiveSessionCount < 5 && DateTime.UtcNow < timeoutAt)
+            {
+                await Task.Delay(20);
+            }
+
+            Assert.Equal(5, executor.ActiveSessionCount);
+        }
+        finally
+        {
+            releaseGate.Set();
+        }
 
         var results = await Task.WhenAll(tasks);
 
         Assert.All(results, result => Assert.Equal(0, result.ExitCode));
         Assert.Equal(5, results.Select(static result => result.StdOut.Trim()).Distinct(StringComparer.Ordinal).Count());
-        Assert.True(executor.ActiveSessionCount >= 5);
+        Assert.Equal(5, executor.ActiveSessionCount);
     }
 
     [Fact]
