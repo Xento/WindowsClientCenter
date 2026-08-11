@@ -20,16 +20,17 @@ public sealed class FileTailReaderTests : IDisposable
         await File.WriteAllTextAsync(path, "seed" + Environment.NewLine);
 
         var observedLines = new ConcurrentQueue<string>();
+        var initialized = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         using var cts = new CancellationTokenSource();
         var followTask = FileTailReader.FollowLinesAsync(
             path,
             startPosition: null,
             observedLines.Enqueue,
-            _ => { },
+            _ => initialized.TrySetResult(),
             pollDelayMilliseconds: 25,
             cts.Token);
 
-        await Task.Delay(150);
+        await initialized.Task.WaitAsync(TimeSpan.FromSeconds(3));
         await File.AppendAllTextAsync(path, "first" + Environment.NewLine);
 
         await WaitUntilAsync(
@@ -48,16 +49,17 @@ public sealed class FileTailReaderTests : IDisposable
         await File.WriteAllTextAsync(path, "seed" + Environment.NewLine);
 
         var observedLines = new ConcurrentQueue<string>();
+        var initialized = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         using var cts = new CancellationTokenSource();
         var followTask = FileTailReader.FollowLinesAsync(
             path,
             startPosition: null,
             observedLines.Enqueue,
-            _ => { },
+            _ => initialized.TrySetResult(),
             pollDelayMilliseconds: 25,
             cts.Token);
 
-        await Task.Delay(150);
+        await initialized.Task.WaitAsync(TimeSpan.FromSeconds(3));
         await File.AppendAllTextAsync(path, "before-reset" + Environment.NewLine);
         await WaitUntilAsync(
             () => observedLines.Any(line => string.Equals(line, "before-reset", StringComparison.Ordinal)),

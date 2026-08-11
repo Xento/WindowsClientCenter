@@ -206,7 +206,9 @@ public sealed class WindowsUpdateAgentViewModelTests
                 ProgressCursor = 128
             });
 
-        var viewModel = new WindowsUpdateAgentViewModel(new FakePluginContext(BuildServices(executor)));
+        using var viewModel = new WindowsUpdateAgentViewModel(
+            new FakePluginContext(BuildServices(executor)),
+            initialNavigationTarget: "available-updates");
         SetPrivateField(viewModel, "_activeInstallHost", "CLIENT01.remote");
         SetPrivateField(viewModel, "_activeInstallStatusPath", @"C:\ProgramData\WindowsClientCenter\WindowsUpdateAgent\install-status.json");
         SetPrivateField(viewModel, "_activeInstallProgressLogPath", @"C:\ProgramData\WindowsClientCenter\WindowsUpdateAgent\install-progress.log");
@@ -231,7 +233,9 @@ public sealed class WindowsUpdateAgentViewModelTests
             ProgressCursor = 256
         });
 
-        var viewModel = new WindowsUpdateAgentViewModel(new FakePluginContext(BuildServices(executor)));
+        using var viewModel = new WindowsUpdateAgentViewModel(
+            new FakePluginContext(BuildServices(executor)),
+            initialNavigationTarget: "available-updates");
         SetPrivateField(viewModel, "_activeInstallHost", "CLIENT01.remote");
         SetPrivateField(viewModel, "_activeInstallStatusPath", @"C:\ProgramData\WindowsClientCenter\WindowsUpdateAgent\install-status.json");
         SetPrivateField(viewModel, "_activeInstallProgressLogPath", @"C:\ProgramData\WindowsClientCenter\WindowsUpdateAgent\install-progress.log");

@@ -100,22 +100,37 @@ public sealed class LocalPowerShellExecutorTests
             new FakeHostConnectivityService(),
             options: new IntuneRuntimeOptions { PowerShellSessionPoolSize = 1 },
             hostBusyStateSinkAccessor: () => hostBusyStateSink);
+        var gateName = $"WindowsClientCenter-{Guid.NewGuid():N}";
+        using var releaseGate = new EventWaitHandle(false, EventResetMode.ManualReset, gateName);
 
         var blocker = executor.ExecuteForHostAsync(
             Environment.MachineName,
-            "[System.Threading.Thread]::Sleep(300); 'first'",
+            $"$null = [System.Threading.EventWaitHandle]::OpenExisting('{gateName}').WaitOne(); 'first'",
             CancellationToken.None).AsTask();
-
-        await Task.Delay(50);
 
         var waiter = executor.ExecuteForHostAsync(
             Environment.MachineName,
             "'second'",
             CancellationToken.None).AsTask();
 
+        try
+        {
+            var timeoutAt = DateTime.UtcNow.AddSeconds(10);
+            while (!hostBusyStateSink.History.Any(static entry => entry.Operation == "set" && entry.Status.Contains("waiting", StringComparison.Ordinal)) &&
+                   DateTime.UtcNow < timeoutAt)
+            {
+                await Task.Delay(20);
+            }
+
+            Assert.Contains(hostBusyStateSink.History, static entry => entry.Operation == "set" && entry.Status.Contains("waiting", StringComparison.Ordinal));
+        }
+        finally
+        {
+            releaseGate.Set();
+        }
+
         await Task.WhenAll(blocker, waiter);
 
-        Assert.Contains(hostBusyStateSink.History, static entry => entry.Operation == "set" && entry.Status.Contains("waiting", StringComparison.Ordinal));
         Assert.Contains(hostBusyStateSink.History, static entry => entry.Operation == "set" && entry.Tasks.Any(task => task.Contains("sessions in use", StringComparison.Ordinal)));
         Assert.Contains(hostBusyStateSink.History, static entry => entry.Operation == "set" && entry.Tasks.Any(task => task.Contains("waiting request", StringComparison.Ordinal)));
         Assert.Contains(hostBusyStateSink.History, static entry => entry.Operation == "clear");

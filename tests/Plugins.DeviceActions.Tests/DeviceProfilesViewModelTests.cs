@@ -43,11 +43,24 @@ public sealed class DeviceProfilesViewModelTests
         Assert.NotEqual("Not calculated", viewModel.SelectedProfile?.RawSizeDisplay);
 
         targetHostService.SetCurrentHost("CLIENT02");
-        await Task.Delay(50);
+        await WaitUntilAsync(
+            () => viewModel.Profiles.Count == 1 &&
+                  string.Equals(viewModel.SelectedProfile?.LocalPath, @"C:\Users\charlie", StringComparison.OrdinalIgnoreCase));
 
         Assert.Single(viewModel.Profiles);
         Assert.Equal(@"C:\Users\charlie", viewModel.SelectedProfile?.LocalPath);
         Assert.Equal("Not calculated", viewModel.SelectedProfile?.RawSizeDisplay);
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        var timeoutAt = DateTime.UtcNow.AddSeconds(3);
+        while (!condition() && DateTime.UtcNow < timeoutAt)
+        {
+            await Task.Delay(20);
+        }
+
+        Assert.True(condition(), "Condition was not satisfied within the allotted time.");
     }
 
     [Fact]
