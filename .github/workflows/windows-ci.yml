@@ -77,7 +77,7 @@ jobs:
         run: ./build/package-layout.ps1 -Configuration Release
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: WindowsClientCenter-artifacts
           path: artifacts/**
