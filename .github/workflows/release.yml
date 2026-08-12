@@ -1,0 +1,84 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v4
+
+      - name: Restore
+        run: dotnet restore WindowsClientCenter.sln
+
+      - name: Verify third-party package inventory
+        shell: pwsh
+        run: |
+          ./scripts/generate-third-party-package-notices.ps1
+          git diff --exit-code -- docs/third-party-nuget-packages.md
+
+      - name: Build
+        run: dotnet build WindowsClientCenter.sln -c Release --no-restore -warnaserror
+
+      - name: Test
+        run: dotnet test WindowsClientCenter.sln -c Release --no-build -m:1
+
+      - name: Build release package
+        shell: pwsh
+        run: ./build/package-layout.ps1 -Configuration Release
+
+      - name: Create checksums
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem artifacts/package -Filter '*.zip' -File | Sort-Object Name
+          if ($files.Count -ne 2) {
+            throw "Expected exactly two release ZIP files, found $($files.Count)."
+          }
+
+          $checksums = foreach ($file in $files) {
+            $hash = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($file.Name)"
+          }
+          $checksums | Set-Content artifacts/package/SHA256SUMS.txt -Encoding ascii
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: WindowsClientCenter-release-${{ github.ref_name }}
+          path: |
+            artifacts/package/WindowsClientCenter-win-x64.zip
+            artifacts/package/WindowsClientCenter-LGPL-source.zip
+            artifacts/package/SHA256SUMS.txt
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            artifacts/package/WindowsClientCenter-win-x64.zip
+            artifacts/package/WindowsClientCenter-LGPL-source.zip
+            artifacts/package/SHA256SUMS.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

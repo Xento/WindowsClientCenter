@@ -183,6 +183,18 @@ The script builds the plugins, publishes a self-contained multi-file
 material, and writes both the binary ZIP and a corresponding LGPL source ZIP
 below `artifacts/package/`.
 
+GitHub Actions builds the same package when a tag beginning with `v` is pushed
+and publishes the binary ZIP, LGPL source ZIP, and SHA-256 checksums on the
+repository's Releases page. For example:
+
+```powershell
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The `release` workflow can also be started manually to validate and download
+the package as a temporary workflow artifact without creating a GitHub release.
+
 ## Developer Notes
 
 - Public configuration guidance: [docs/CONFIGURATION.md](docs/CONFIGURATION.md)
